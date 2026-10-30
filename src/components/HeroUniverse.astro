@@ -1,0 +1,435 @@
+---
+import { profileData } from '../data/profile';
+import { projectsData } from '../data/projects';
+
+const completedProjects = projectsData.filter(p => p.status === 'Hoàn thành').length;
+const totalProjects = projectsData.length;
+---
+
+<section class="hero-universe">
+  <div class="container hero-grid">
+    <!-- Left Column: Content & CTA -->
+    <div class="hero-text-col">
+      <div class="hero-badge animate-float">
+        <span class="badge-orbit-dot"></span>
+        <span class="badge-text">VŨ TRỤ SỐ &bull; CREATIVE TECHNOLOGY</span>
+      </div>
+
+      <h1 class="hero-main-title">
+        Xin chào, tôi là <span class="name-highlight">{profileData.name}</span><br />
+        <span class="text-gradient">Kỹ sư Phần mềm</span> &amp; Web Hiện đại
+      </h1>
+
+      <p class="hero-lead">
+        {profileData.tagline}. {profileData.bio}
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="hero-cta-group">
+        <a href="/projects" class="btn-cosmic-primary">
+          <span>Khám phá Dự án</span>
+          <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="/about" class="btn-cosmic-outline">
+          <span>Hồ sơ Cá nhân</span>
+        </a>
+        <a href="/contact" class="btn-cosmic-ghost">
+          <span>Trạm Liên hệ</span>
+          <span class="ghost-arrow">→</span>
+        </a>
+      </div>
+
+      <!-- Quick Availability Status -->
+      <div class="status-badge">
+        <span class="status-live-dot"></span>
+        <span class="status-text">{profileData.statusText}</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Digital Planet & Orbital Rings -->
+    <div class="hero-visual-col">
+      <div class="planet-viewport">
+        <!-- Glow Backlight -->
+        <div class="planet-backglow"></div>
+
+        <!-- Outer Orbital Ring -->
+        <div class="orbital-ring ring-outer animate-orbit">
+          <div class="satellite sat-1">
+            <span class="sat-tag text-mono">Astro</span>
+          </div>
+          <div class="satellite sat-2">
+            <span class="sat-tag text-mono">TypeScript</span>
+          </div>
+        </div>
+
+        <!-- Middle Orbital Ring -->
+        <div class="orbital-ring ring-middle">
+          <div class="satellite sat-3">
+            <span class="sat-tag text-mono">AI</span>
+          </div>
+        </div>
+
+        <!-- The Digital Planet Core -->
+        <div class="digital-planet-core animate-pulse-glow">
+          <div class="planet-sphere">
+            <div class="planet-texture"></div>
+            <div class="planet-specular"></div>
+          </div>
+        </div>
+
+        <!-- Foreground Orbit Cross -->
+        <div class="orbital-ring ring-tilted"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cosmic Stats Bar (Section 2.1 PRD) -->
+  <div class="container stats-bar-container">
+    <div class="glass-card stats-bar">
+      <div class="stat-item">
+        <span class="stat-number text-gradient">{totalProjects}+</span>
+        <span class="stat-label">Dự án Xây dựng</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+
+      <div class="stat-item">
+        <span class="stat-number text-gradient">12+</span>
+        <span class="stat-label">Công nghệ &amp; Thư viện</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+
+      <div class="stat-item">
+        <span class="stat-number text-gradient">100%</span>
+        <span class="stat-label">Cam kết Tối ưu SEO &amp; Perf</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+
+      <div class="stat-item">
+        <span class="stat-number text-gradient">24/7</span>
+        <span class="stat-label">Sẵn sàng Kết nối</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-universe {
+    position: relative;
+    padding: 3.5rem 0 3rem;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (min-width: 992px) {
+    .hero-grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 4rem;
+      min-height: 520px;
+    }
+  }
+
+  /* Left Column */
+  .hero-text-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.95rem;
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.08);
+    border: 1px solid rgba(85, 214, 255, 0.3);
+    border-radius: var(--radius-full);
+  }
+
+  .badge-orbit-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-cosmic-cyan);
+    box-shadow: 0 0 10px var(--color-cosmic-cyan);
+  }
+
+  .hero-main-title {
+    font-size: clamp(2.3rem, 4.5vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+
+  .name-highlight {
+    color: var(--color-starlight);
+    position: relative;
+  }
+
+  .hero-lead {
+    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+    color: var(--color-muted-text);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  /* CTA Buttons */
+  .hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 0.8rem;
+  }
+
+  .btn-cosmic-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1.2rem;
+    font-size: 0.92rem;
+    color: var(--color-muted-text);
+    text-decoration: none;
+    transition: color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .btn-cosmic-ghost:hover {
+    color: var(--color-cosmic-cyan);
+    transform: translateX(3px);
+  }
+
+  .ghost-arrow {
+    transition: transform var(--transition-fast);
+  }
+  .btn-cosmic-ghost:hover .ghost-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Status */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--color-muted-text);
+    padding: 0.4rem 0.8rem;
+    background: rgba(18, 28, 52, 0.5);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-full);
+    margin-top: 0.5rem;
+  }
+
+  .status-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 8px #10B981;
+  }
+
+  /* Right Column: Digital Planet */
+  .hero-visual-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .planet-viewport {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 576px) {
+    .planet-viewport {
+      width: 380px;
+      height: 380px;
+    }
+  }
+
+  .planet-backglow {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(85, 214, 255, 0.25) 0%, rgba(100, 139, 255, 0.15) 45%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  /* Core Planet */
+  .digital-planet-core {
+    position: relative;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+  .planet-sphere {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #55D6FF 0%, #648BFF 30%, #1e295d 70%, #070B18 100%);
+    box-shadow: 
+      inset -15px -15px 30px rgba(7, 11, 24, 0.9),
+      inset 8px 8px 20px rgba(85, 214, 255, 0.6),
+      0 0 35px rgba(85, 214, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .planet-texture {
+    position: absolute;
+    inset: 0;
+    opacity: 0.35;
+    background-image: 
+      radial-gradient(ellipse at 40% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+      repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(85, 214, 255, 0.1) 10px, rgba(85, 214, 255, 0.1) 20px);
+    mix-blend-mode: overlay;
+  }
+
+  .planet-specular {
+    position: absolute;
+    top: 15%;
+    left: 20%;
+    width: 45px;
+    height: 25px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    filter: blur(6px);
+    transform: rotate(-30deg);
+  }
+
+  /* Orbital Rings */
+  .orbital-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+    pointer-events: none;
+  }
+
+  .ring-outer {
+    width: 320px;
+    height: 320px;
+    border-color: rgba(85, 214, 255, 0.25);
+    border-style: dashed;
+    z-index: 1;
+  }
+
+  .ring-middle {
+    width: 250px;
+    height: 110px;
+    border: 1.5px solid rgba(167, 139, 250, 0.4);
+    transform: rotate(-25deg);
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.25);
+    z-index: 3;
+  }
+
+  .ring-tilted {
+    width: 290px;
+    height: 130px;
+    border: 1px solid rgba(100, 139, 255, 0.25);
+    transform: rotate(35deg);
+    z-index: 1;
+  }
+
+  /* Satellites */
+  .satellite {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+
+  .sat-1 {
+    top: 15%;
+    left: 85%;
+  }
+
+  .sat-2 {
+    bottom: 12%;
+    left: 15%;
+  }
+
+  .sat-3 {
+    top: 50%;
+    right: -10px;
+  }
+
+  .sat-tag {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-starlight);
+    background: rgba(18, 28, 52, 0.9);
+    border: 1px solid var(--color-cosmic-cyan);
+    border-radius: var(--radius-full);
+    box-shadow: 0 0 12px var(--color-cyan-glow);
+  }
+
+  /* Stats Bar */
+  .stats-bar-container {
+    margin-top: 3.5rem;
+  }
+
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 1.75rem 2rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .stats-bar {
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .stat-number {
+    font-size: clamp(1.8rem, 3vw, 2.3rem);
+    font-weight: 800;
+    font-family: var(--font-mono);
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--color-muted-text);
+  }
+
+  .stat-divider {
+    display: none;
+    width: 1px;
+    height: 40px;
+    background: var(--color-border-glass);
+  }
+
+  @media (min-width: 768px) {
+    .stat-divider {
+      display: block;
+    }
+  }
+</style>

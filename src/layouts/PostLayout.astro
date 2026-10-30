@@ -1,0 +1,787 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { MarkdownHeading } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  headings: MarkdownHeading[];
+  readingTime: string;
+  relatedPosts: CollectionEntry<'posts'>[];
+}
+
+const { post, headings, readingTime, relatedPosts } = Astro.props;
+const { title, description, pubDate, updatedDate, category, tags, cover } = post.data;
+
+// Filter headings for TOC (h2 and h3)
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<BaseLayout title={`${title} | IT UNIVERSE Blog`} description={description} ogImage={cover}>
+  <!-- BlogPosting Structured Data for SEO -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: title,
+      description: description,
+      datePublished: pubDate.toISOString(),
+      dateModified: (updatedDate || pubDate).toISOString(),
+      author: {
+        '@type': 'Person',
+        name: 'Khánh',
+        url: 'https://khanh.github.io',
+      },
+      keywords: tags.join(', '),
+      articleSection: category,
+    })}
+  />
+
+  <!-- Top Reading Progress Bar (PRD Section 2.4) -->
+  <div class="reading-progress-track" aria-hidden="true">
+    <div class="reading-progress-fill" id="reading-progress-bar"></div>
+  </div>
+
+  <article class="container post-container">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li><a href="/">Trang chủ</a></li>
+        <li class="separator">/</li>
+        <li><a href="/posts">Bài viết</a></li>
+        <li class="separator">/</li>
+        <li class="current" aria-current="page">{title}</li>
+      </ol>
+    </nav>
+
+    <!-- Post Header Header -->
+    <header class="post-header">
+      <div class="post-meta-top">
+        <span class="category-pill text-mono">{category}</span>
+        <span class="reading-time-pill text-mono">⏳ {readingTime}</span>
+      </div>
+
+      <h1 class="post-main-title">{title}</h1>
+
+      <p class="post-main-desc">{description}</p>
+
+      <div class="post-meta-bottom">
+        <div class="author-info">
+          <div class="author-avatar-mini">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <circle cx="12" cy="8" r="4" fill="#55D6FF" />
+              <path d="M4 20c0-4 4-6 8-6s8 2 8 6v1H4v-1z" fill="#648BFF" />
+            </svg>
+          </div>
+          <div class="author-meta">
+            <span class="author-name">Khánh &bull; IT UNIVERSE</span>
+            <time class="pub-date text-mono" datetime={pubDate.toISOString()}>
+              Ngày đăng: {pubDate.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+          </div>
+        </div>
+
+        {updatedDate && (
+          <div class="updated-date text-mono">
+            <span>Cập nhật: {updatedDate.toLocaleDateString('vi-VN')}</span>
+          </div>
+        )}
+      </div>
+
+      <div class="header-divider" aria-hidden="true"></div>
+    </header>
+
+    <!-- 2-Column Content Layout: Main Article + TOC Sidebar -->
+    <div class="post-layout-grid">
+      <!-- Main Content Column -->
+      <main class="post-content-col">
+        <!-- Rendered Markdown Body -->
+        <div class="markdown-body" id="article-body">
+          <slot />
+        </div>
+
+        <!-- Post Tags & Share Footer -->
+        <footer class="post-footer-section">
+          <div class="post-tags-row">
+            <span class="tags-label">Chủ đề:</span>
+            <div class="tags-list">
+              {tags.map((tag) => (
+                <a href={`/posts?tag=${encodeURIComponent(tag)}`} class="tag-chip">
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div class="post-nav-actions">
+            <a href="/posts" class="btn-cosmic-outline">
+              <span class="back-arrow">←</span>
+              <span>Quay lại tất cả bài viết</span>
+            </a>
+            <button type="button" class="btn-cosmic-ghost" id="share-btn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+              <span id="share-btn-text">Chia sẻ bài viết</span>
+            </button>
+          </div>
+        </footer>
+      </main>
+
+      <!-- Right Column: Sticky Table of Contents (TOC) -->
+      <aside class="post-sidebar-col">
+        <div class="sticky-sidebar">
+          {tocHeadings.length > 0 && (
+            <div class="glass-card toc-card">
+              <div class="toc-header">
+                <span class="toc-icon">📑</span>
+                <h3 class="toc-title">Mục Lục Bài Viết</h3>
+              </div>
+              <nav class="toc-nav" aria-label="Mục lục bài viết">
+                <ul class="toc-list">
+                  {tocHeadings.map((h) => (
+                    <li class:list={['toc-item', `toc-depth-${h.depth}`]}>
+                      <a href={`#${h.slug}`} class="toc-link" data-slug={h.slug}>
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          )}
+
+          <!-- Quick Info Widget -->
+          <div class="glass-card meta-widget">
+            <h4 class="widget-title">Thông tin đọc</h4>
+            <div class="widget-info-row">
+              <span class="widget-key">Chuyên mục:</span>
+              <span class="widget-val text-mono">{category}</span>
+            </div>
+            <div class="widget-info-row">
+              <span class="widget-key">Thời gian:</span>
+              <span class="widget-val text-mono">{readingTime}</span>
+            </div>
+            <div class="widget-info-row">
+              <span class="widget-key">Nền tảng:</span>
+              <span class="widget-val text-mono">Astro 7 + Markdown</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Related Posts Section (PRD Section 2.4) -->
+    {relatedPosts.length > 0 && (
+      <section class="related-posts-section">
+        <div class="related-header">
+          <span class="cosmic-badge">RECOMMENDED READING</span>
+          <h2 class="related-title">Bài Viết <span class="text-gradient">Liên Quan</span></h2>
+        </div>
+        <div class="related-grid">
+          {relatedPosts.map((rel) => (
+            <article class="glass-card related-card">
+              <span class="related-cat text-mono">{rel.data.category}</span>
+              <h3 class="related-post-title">
+                <a href={`/posts/${rel.id}`}>{rel.data.title}</a>
+              </h3>
+              <p class="related-post-desc">{rel.data.description}</p>
+              <div class="related-footer">
+                <time class="related-date text-mono">
+                  {rel.data.pubDate.toLocaleDateString('vi-VN')}
+                </time>
+                <a href={`/posts/${rel.id}`} class="related-read-more">
+                  Đọc tiếp →
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  /* Reading Progress Bar */
+  .reading-progress-track {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 1000;
+    background: transparent;
+  }
+
+  .reading-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--grad-cosmic-primary);
+    box-shadow: 0 0 10px var(--color-cosmic-cyan);
+    transition: width 100ms ease-out;
+  }
+
+  /* Container */
+  .post-container {
+    padding-top: 2.5rem;
+    padding-bottom: 5rem;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb-nav {
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--color-muted-text);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-muted-text);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-cosmic-cyan);
+  }
+
+  .separator {
+    color: rgba(154, 170, 196, 0.4);
+  }
+
+  .current {
+    color: var(--color-starlight);
+    font-weight: 500;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Header */
+  .post-header {
+    margin-bottom: 3rem;
+  }
+
+  .post-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .category-pill {
+    font-size: 0.78rem;
+    color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.1);
+    border: 1px solid rgba(85, 214, 255, 0.3);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+  }
+
+  .reading-time-pill {
+    font-size: 0.78rem;
+    color: var(--color-muted-text);
+  }
+
+  .post-main-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.25;
+    margin-bottom: 1rem;
+  }
+
+  .post-main-desc {
+    font-size: 1.15rem;
+    color: var(--color-muted-text);
+    line-height: 1.7;
+    max-width: 800px;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-meta-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .author-avatar-mini {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(18, 28, 52, 0.9);
+    border: 1px solid var(--color-border-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .author-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .author-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-starlight);
+  }
+
+  .pub-date {
+    font-size: 0.78rem;
+    color: var(--color-muted-text);
+  }
+
+  .updated-date {
+    font-size: 0.8rem;
+    color: var(--color-cosmic-violet);
+  }
+
+  .header-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-border-glow) 0%, transparent 80%);
+  }
+
+  /* 2-Column Grid */
+  .post-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @media (min-width: 992px) {
+    .post-layout-grid {
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 3.5rem;
+    }
+  }
+
+  /* Markdown Body Styling */
+  .markdown-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #c9d6eb;
+  }
+
+  .markdown-body :global(h2) {
+    font-size: 1.75rem;
+    margin-top: 2.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--color-border-glass);
+    color: var(--color-starlight);
+    scroll-margin-top: calc(var(--header-height) + 20px);
+  }
+
+  .markdown-body :global(h3) {
+    font-size: 1.35rem;
+    margin-top: 2rem;
+    margin-bottom: 0.8rem;
+    color: var(--color-cosmic-cyan);
+    scroll-margin-top: calc(var(--header-height) + 20px);
+  }
+
+  .markdown-body :global(p) {
+    margin-bottom: 1.5rem;
+    color: #c0d0ea;
+  }
+
+  .markdown-body :global(ul),
+  .markdown-body :global(ol) {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    color: #c0d0ea;
+  }
+
+  .markdown-body :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .markdown-body :global(blockquote) {
+    margin: 1.5rem 0;
+    padding: 1rem 1.5rem;
+    background: rgba(18, 28, 52, 0.6);
+    border-left: 4px solid var(--color-cosmic-cyan);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-style: italic;
+    color: var(--color-starlight);
+  }
+
+  /* Inline Code */
+  .markdown-body :global(:not(pre) > code) {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    padding: 0.2rem 0.45rem;
+    background: rgba(85, 214, 255, 0.1);
+    border: 1px solid rgba(85, 214, 255, 0.2);
+    border-radius: var(--radius-sm);
+    color: var(--color-cosmic-cyan);
+  }
+
+  /* Shiki Code Blocks */
+  .markdown-body :global(pre) {
+    position: relative;
+    padding: 1.25rem 1.5rem;
+    margin: 1.8rem 0;
+    border-radius: var(--radius-md);
+    background: #0b1122 !important;
+    border: 1px solid rgba(85, 214, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .markdown-body :global(pre code) {
+    background: transparent !important;
+    padding: 0;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+  }
+
+  /* Post Footer */
+  .post-footer-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border-glass);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .post-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .tags-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-starlight);
+  }
+
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag-chip {
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.08);
+    border: 1px solid rgba(85, 214, 255, 0.2);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .tag-chip:hover {
+    background: var(--color-cosmic-cyan);
+    color: var(--color-deep-space);
+  }
+
+  .post-nav-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .btn-cosmic-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    color: var(--color-muted-text);
+    background: transparent;
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-cosmic-ghost:hover {
+    color: var(--color-cosmic-cyan);
+    border-color: var(--color-cosmic-cyan);
+  }
+
+  .back-arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  .btn-cosmic-outline:hover .back-arrow {
+    transform: translateX(-4px);
+  }
+
+  /* Sticky Sidebar */
+  .sticky-sidebar {
+    position: sticky;
+    top: calc(var(--header-height) + 20px);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* TOC Card */
+  .toc-card {
+    padding: 1.5rem;
+    max-height: calc(100vh - var(--header-height) - 150px);
+    overflow-y: auto;
+  }
+
+  .toc-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(154, 170, 196, 0.12);
+  }
+
+  .toc-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-starlight);
+  }
+
+  .toc-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .toc-item {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .toc-depth-3 {
+    padding-left: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .toc-link {
+    color: var(--color-muted-text);
+    text-decoration: none;
+    display: inline-block;
+    transition: all var(--transition-fast);
+  }
+
+  .toc-link:hover,
+  .toc-link.active-toc {
+    color: var(--color-cosmic-cyan);
+    transform: translateX(3px);
+  }
+
+  .toc-link.active-toc {
+    font-weight: 600;
+  }
+
+  /* Meta Widget */
+  .meta-widget {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .widget-title {
+    font-size: 0.85rem;
+    color: var(--color-starlight);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+
+  .widget-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+  }
+
+  .widget-key {
+    color: var(--color-muted-text);
+  }
+
+  .widget-val {
+    color: var(--color-starlight);
+  }
+
+  /* Related Posts */
+  .related-posts-section {
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--color-border-glass);
+  }
+
+  .related-header {
+    margin-bottom: 2rem;
+  }
+
+  .related-title {
+    margin-top: 0.5rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .related-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .related-cat {
+    font-size: 0.72rem;
+    color: var(--color-cosmic-cyan);
+  }
+
+  .related-post-title {
+    font-size: 1.05rem;
+  }
+
+  .related-post-title a {
+    color: var(--color-starlight);
+    text-decoration: none;
+  }
+
+  .related-post-title a:hover {
+    color: var(--color-cosmic-cyan);
+  }
+
+  .related-post-desc {
+    font-size: 0.85rem;
+    color: var(--color-muted-text);
+    line-height: 1.5;
+    flex-grow: 1;
+  }
+
+  .related-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.8rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(154, 170, 196, 0.1);
+    font-size: 0.78rem;
+  }
+
+  .related-date {
+    color: var(--color-muted-text);
+  }
+
+  .related-read-more {
+    color: var(--color-cosmic-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  // 1. Reading Progress Bar
+  const progressBar = document.getElementById('reading-progress-bar');
+  const updateProgress = () => {
+    if (!progressBar) return;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+  };
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // 2. Active TOC Highlighting on Scroll
+  const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+  const headings = Array.from(document.querySelectorAll<HTMLElement>('.markdown-body h2, .markdown-body h3'));
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          tocLinks.forEach((link) => {
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active-toc');
+            } else {
+              link.classList.remove('active-toc');
+            }
+          });
+        }
+      });
+    },
+    { rootMargin: '-80px 0px -70% 0px' }
+  );
+
+  headings.forEach((heading) => observer.observe(heading));
+
+  // 3. Share Button Logic
+  const shareBtn = document.getElementById('share-btn');
+  const shareBtnText = document.getElementById('share-btn-text');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: document.title,
+            url: window.location.href,
+          });
+        } catch {
+          // User cancelled
+        }
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        if (shareBtnText) shareBtnText.textContent = 'Đã chép liên kết!';
+        setTimeout(() => {
+          if (shareBtnText) shareBtnText.textContent = 'Chia sẻ bài viết';
+        }, 3000);
+      }
+    });
+  }
+</script>

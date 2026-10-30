@@ -1,0 +1,388 @@
+---
+---
+
+<div class="cyber-terminal-wrapper glass-card">
+  <!-- Terminal Header Bar -->
+  <div class="terminal-header">
+    <div class="window-controls">
+      <span class="ctrl-dot dot-red"></span>
+      <span class="ctrl-dot dot-yellow"></span>
+      <span class="ctrl-dot dot-green"></span>
+    </div>
+    <div class="terminal-title text-mono">
+      <span>khanh@it-universe: ~ (zsh)</span>
+    </div>
+    <div class="terminal-status text-mono">
+      <span class="status-badge">ONLINE</span>
+    </div>
+  </div>
+
+  <!-- Terminal Body / Console Output -->
+  <div class="terminal-body" id="terminal-screen">
+    <div class="terminal-welcome-banner text-mono">
+      <pre class="ascii-art">
+   ___ _____   _   _ _   _ _____ _   _ _____ ____  ____  _____ 
+  |_ _|_   _| | | | | \ | |_   _| | | | ____|  _ \/ ___|| ____|
+   | |  | |   | | | |  \| | | | | | | |  _| | |_) \___ \|  _|  
+   | |  | |   | |_| | |\  | | | | |_| | |___|  _ < ___) | |___ 
+  |___| |_|    \___/|_| \_| |_|  \___/|_____|_| \_\____/|_____|
+      </pre>
+      <p class="welcome-text">✦ Chào mừng đến với IT UNIVERSE Interactive Shell v2.4.0</p>
+      <p class="welcome-sub">Gõ lệnh <span class="cmd-highlight">help</span> để xem danh sách lệnh khả dụng hoặc thử <span class="cmd-highlight">about</span>, <span class="cmd-highlight">skills</span>, <span class="cmd-highlight">matrix</span>.</p>
+      <div class="terminal-divider"></div>
+    </div>
+
+    <!-- Dynamic Output Area -->
+    <div id="terminal-output" class="terminal-output text-mono"></div>
+
+    <!-- Active Input Line -->
+    <div class="terminal-input-line text-mono">
+      <span class="prompt-user">khanh@it-universe</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-symbol">$</span>
+      <input
+        type="text"
+        id="terminal-input"
+        class="terminal-input"
+        autocomplete="off"
+        spellcheck="false"
+        autofocus
+        aria-label="Dòng lệnh terminal"
+      />
+    </div>
+  </div>
+</div>
+
+<style>
+  .cyber-terminal-wrapper {
+    overflow: hidden;
+    background: rgba(7, 11, 24, 0.95);
+    border: 1px solid rgba(85, 214, 255, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(85, 214, 255, 0.1);
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    background: rgba(18, 28, 52, 0.9);
+    border-bottom: 1px solid var(--color-border-glass);
+  }
+
+  .window-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .ctrl-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+  }
+
+  .dot-red {
+    background: #EF4444;
+  }
+  .dot-yellow {
+    background: #F59E0B;
+  }
+  .dot-green {
+    background: #10B981;
+  }
+
+  .terminal-title {
+    font-size: 0.82rem;
+    color: var(--color-starlight);
+    opacity: 0.8;
+  }
+
+  .terminal-status .status-badge {
+    font-size: 0.68rem;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid #10B981;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+  }
+
+  /* Body */
+  .terminal-body {
+    padding: 1.5rem;
+    min-height: 440px;
+    max-height: 520px;
+    overflow-y: auto;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #c9d6eb;
+    background: rgba(7, 11, 24, 0.9);
+  }
+
+  .ascii-art {
+    color: var(--color-cosmic-cyan);
+    font-size: 0.58rem;
+    line-height: 1.15;
+    margin-bottom: 0.8rem;
+    overflow-x: auto;
+    text-shadow: 0 0 8px var(--color-cyan-glow);
+  }
+
+  @media (min-width: 640px) {
+    .ascii-art {
+      font-size: 0.72rem;
+    }
+  }
+
+  .welcome-text {
+    color: var(--color-starlight);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .welcome-sub {
+    color: var(--color-muted-text);
+    font-size: 0.82rem;
+  }
+
+  .cmd-highlight {
+    color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.12);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .terminal-divider {
+    height: 1px;
+    background: rgba(154, 170, 196, 0.15);
+    margin: 1rem 0 1.25rem;
+  }
+
+  /* Output */
+  .terminal-output {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .terminal-output :global(.term-cmd-history) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-starlight);
+    font-weight: 600;
+  }
+
+  .terminal-output :global(.term-response) {
+    color: #c0d0ea;
+    padding-left: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .terminal-output :global(.term-error) {
+    color: #F87171;
+  }
+
+  .terminal-output :global(.term-success) {
+    color: #34D399;
+  }
+
+  .terminal-output :global(.term-highlight) {
+    color: var(--color-cosmic-cyan);
+  }
+
+  /* Input Line */
+  .terminal-input-line {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+  }
+
+  .prompt-user {
+    color: #34D399;
+    font-weight: 600;
+  }
+
+  .prompt-sep {
+    color: var(--color-muted-text);
+  }
+
+  .prompt-path {
+    color: var(--color-cosmic-cyan);
+  }
+
+  .prompt-symbol {
+    color: #FBBF24;
+    font-weight: bold;
+    margin-right: 0.2rem;
+  }
+
+  .terminal-input {
+    flex: 1 1 auto;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-starlight);
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    caret-color: var(--color-cosmic-cyan);
+  }
+</style>
+
+<script>
+  const terminalScreen = document.getElementById('terminal-screen');
+  const terminalInput = document.getElementById('terminal-input') as HTMLInputElement | null;
+  const terminalOutput = document.getElementById('terminal-output');
+
+  if (terminalInput && terminalOutput && terminalScreen) {
+    const history: string[] = [];
+    let historyIdx = -1;
+
+    // Focus input on click anywhere inside screen
+    terminalScreen.addEventListener('click', () => {
+      terminalInput.focus();
+    });
+
+    const commands: Record<string, () => string> = {
+      help: () => `
+<div class="term-response">
+<span class="term-highlight">=== CÁC LỆNH KHẢ DỤNG TRONG VŨ TRỤ SỐ ===</span><br/>
+• <span class="term-highlight">about</span>      : Tóm tắt lý lịch & định hướng nghề nghiệp<br/>
+• <span class="term-highlight">skills</span>     : Danh sách kỹ năng công nghệ chính<br/>
+• <span class="term-highlight">projects</span>   : Các dự án tiêu biểu đã xây dựng<br/>
+• <span class="term-highlight">posts</span>      : Danh sách bài viết blog công nghệ mới nhất<br/>
+• <span class="term-highlight">matrix</span>     : Khởi tạo luồng dữ liệu Matrix Stream<br/>
+• <span class="term-highlight">date</span>       : Xem thời gian hiện tại của hệ thống<br/>
+• <span class="term-highlight">contact</span>    : Thông tin kênh kết nối & liên lạc<br/>
+• <span class="term-highlight">clear</span>      : Xóa sạch màn hình terminal<br/>
+• <span class="term-highlight">echo &lt;text&gt;</span>: In chuỗi văn bản ra màn hình
+</div>`,
+
+      about: () => `
+<div class="term-response">
+<span class="term-highlight">✦ TÁC GIẢ:</span> Khánh (Software Engineer & Creative Web Developer)<br/>
+<span class="term-highlight">✦ VỊ TRÍ:</span> Việt Nam (UTC+7)<br/>
+<span class="term-highlight">✦ ĐỊNH HƯỚNG:</span> Senior Software Architect & Creative Technologist.<br/>
+<span class="term-highlight">✦ ĐAM MÊ:</span> Astro, TypeScript, Web Performance, Canvas Graphics & AI.
+</div>`,
+
+      skills: () => `
+<div class="term-response">
+<span class="term-highlight">✦ LANGUAGES:</span> TypeScript, JavaScript (ES6+), HTML5/CSS3, Python, SQL<br/>
+<span class="term-highlight">✦ FRAMEWORKS:</span> Astro, React, Tailwind CSS, Canvas 2D API, Node.js<br/>
+<span class="term-highlight">✦ TOOLS:</span> Git, GitHub Pages/Actions, VS Code, Vite, Figma
+</div>`,
+
+      projects: () => `
+<div class="term-response">
+1. <span class="term-highlight">IT Universe Portfolio</span> [Astro, TS, Canvas] - Website vũ trụ số chuẩn SEO<br/>
+2. <span class="term-highlight">AI Code Companion</span> [React, AI API] - Trực quan hóa giải thuật & tối ưu Big-O<br/>
+3. <span class="term-highlight">Galaxy Task Manager</span> [React, Tailwind] - Ứng dụng Pomodoro & Kanban quỹ đạo<br/>
+Gõ hoặc truy cập <a href="/projects" style="color:#55D6FF;text-decoration:underline;">/projects</a> để xem chi tiết.
+</div>`,
+
+      posts: () => `
+<div class="term-response">
+• <a href="/posts/chao-mung-den-voi-it-universe" style="color:#55D6FF;">Chào Mừng Đến Với IT Universe</a> (2026-10-30)<br/>
+• <a href="/posts/kien-truc-web-hien-dai-voi-astro-va-typescript" style="color:#55D6FF;">Kiến Trúc Web Hiện Đại Với Astro và TypeScript</a> (2026-10-31)<br/>
+• <a href="/posts/ung-dung-canvas-2d-trong-giao-dien-vu-tru" style="color:#55D6FF;">Ứng Dụng Canvas 2D Để Tạo Hiệu Ứng Vũ Trụ Tương Tác</a> (2026-11-01)
+</div>`,
+
+      contact: () => `
+<div class="term-response">
+<span class="term-highlight">✦ EMAIL:</span> khanh.dev@ituniverse.local<br/>
+<span class="term-highlight">✦ GITHUB:</span> https://github.com<br/>
+<span class="term-highlight">✦ LINKEDIN:</span> https://linkedin.com<br/>
+Truy cập trang <a href="/contact" style="color:#55D6FF;text-decoration:underline;">/contact</a> để sử dụng tiện ích Copy Email 1-click.
+</div>`,
+
+      date: () => `
+<div class="term-response term-success">
+✦ THỜI GIAN VŨ TRỤ: ${new Date().toLocaleString('vi-VN', { dateStyle: 'full', timeStyle: 'medium' })}
+</div>`,
+
+      matrix: () => {
+        const stream = Array.from({ length: 4 })
+          .map(() => {
+            const chars = '01ABCDEFXYZ$%#@*&!010110';
+            let line = '';
+            for (let i = 0; i < 35; i++) {
+              line += chars.charAt(Math.floor(Math.random() * chars.length)) + ' ';
+            }
+            return line;
+          })
+          .join('<br/>');
+        return `<div class="term-response term-success" style="font-size:0.8rem;letter-spacing:1px;">
+[INITIATING QUANTUM MATRIX STREAM]<br/>
+${stream}<br/>
+[CONNECTION SECURE // 256-BIT ENCRYPTED]
+</div>`;
+      },
+    };
+
+    terminalInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const rawInput = terminalInput.value.trim();
+        if (!rawInput) return;
+
+        history.push(rawInput);
+        historyIdx = history.length;
+
+        // Display input in log
+        const cmdLog = document.createElement('div');
+        cmdLog.className = 'term-cmd-history';
+        cmdLog.innerHTML = `<span style="color:#34D399;">khanh@it-universe</span>:<span style="color:#55D6FF;">~</span>$ ${escapeHtml(rawInput)}`;
+        terminalOutput.appendChild(cmdLog);
+
+        // Process Command
+        const parts = rawInput.split(' ');
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1).join(' ');
+
+        if (cmd === 'clear') {
+          terminalOutput.innerHTML = '';
+        } else if (cmd === 'echo') {
+          const resp = document.createElement('div');
+          resp.className = 'term-response';
+          resp.textContent = args;
+          terminalOutput.appendChild(resp);
+        } else if (commands[cmd]) {
+          const resp = document.createElement('div');
+          resp.innerHTML = commands[cmd]();
+          terminalOutput.appendChild(resp);
+        } else {
+          const err = document.createElement('div');
+          err.className = 'term-response term-error';
+          err.innerHTML = `Lệnh không tồn tại: "${escapeHtml(cmd)}". Gõ <span class="term-highlight">help</span> để xem các lệnh khả dụng.`;
+          terminalOutput.appendChild(err);
+        }
+
+        terminalInput.value = '';
+        terminalScreen.scrollTop = terminalScreen.scrollHeight;
+      } else if (e.key === 'ArrowUp') {
+        if (history.length > 0 && historyIdx > 0) {
+          historyIdx--;
+          terminalInput.value = history[historyIdx];
+        }
+        e.preventDefault();
+      } else if (e.key === 'ArrowDown') {
+        if (historyIdx < history.length - 1) {
+          historyIdx++;
+          terminalInput.value = history[historyIdx];
+        } else {
+          historyIdx = history.length;
+          terminalInput.value = '';
+        }
+        e.preventDefault();
+      }
+    });
+
+    function escapeHtml(str: string): string {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  }
+</script>

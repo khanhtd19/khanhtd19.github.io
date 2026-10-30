@@ -1,0 +1,19 @@
+{
+  "name": "it-universe-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "IT UNIVERSE - Personal Portfolio website built with Astro and TypeScript",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.4",
+    "typescript": "^7.0.2"
+  }
+}

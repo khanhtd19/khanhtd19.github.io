@@ -1,0 +1,84 @@
+---
+---
+
+<!-- Interactive Mouse-follow Cosmic Glow (PRD Section 4) -->
+<div id="cosmic-cursor-glow" class="cosmic-cursor-glow" aria-hidden="true"></div>
+
+<style>
+  .cosmic-cursor-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -1;
+    background: radial-gradient(
+      circle at center,
+      rgba(85, 214, 255, 0.08) 0%,
+      rgba(100, 139, 255, 0.05) 35%,
+      rgba(167, 139, 250, 0.03) 60%,
+      transparent 75%
+    );
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 300ms ease;
+    mix-blend-mode: screen;
+    will-change: transform;
+  }
+
+  /* Disable on touch screens / mobile without cursor pointer */
+  @media (hover: none) or (pointer: coarse) {
+    .cosmic-cursor-glow {
+      display: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cosmic-cursor-glow {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const glow = document.getElementById('cosmic-cursor-glow');
+
+  if (glow && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let mouseX = -1000;
+    let mouseY = -1000;
+    let currentX = -1000;
+    let currentY = -1000;
+    let isVisible = false;
+    let animId = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (!isVisible) {
+        isVisible = true;
+        glow.style.opacity = '1';
+        currentX = mouseX;
+        currentY = mouseY;
+      }
+    });
+
+    document.addEventListener('mouseleave', () => {
+      isVisible = false;
+      glow.style.opacity = '0';
+    });
+
+    function update() {
+      if (isVisible) {
+        // Linear interpolation (lerp) for smooth lagging follow
+        currentX += (mouseX - currentX) * 0.12;
+        currentY += (mouseY - currentY) * 0.12;
+        glow.style.transform = `translate(${currentX}px, ${currentY}px) translate(-50%, -50%)`;
+      }
+      animId = requestAnimationFrame(update);
+    }
+
+    animId = requestAnimationFrame(update);
+  }
+</script>

@@ -1,0 +1,207 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import StarfieldCanvas from '../components/effects/StarfieldCanvas.astro';
+import MouseGlow from '../components/effects/MouseGlow.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title = 'IT UNIVERSE — Personal Portfolio',
+  description = 'Website portfolio phong cách Cosmic Universe — Trưng bày các dự án công nghệ, bài viết lập trình và thử nghiệm AI.',
+  ogImage = '/favicon.svg',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://khanh.github.io');
+const fullTitle = title.includes('IT UNIVERSE') ? title : `${title} | IT UNIVERSE`;
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary SEO Meta Tags -->
+    <title>{fullTitle}</title>
+    <meta name="title" content={fullTitle} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#070B18" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, canonicalURL)} />
+    <meta property="og:site_name" content="IT UNIVERSE" />
+    <meta property="og:locale" content="vi_VN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={fullTitle} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={new URL(ogImage, canonicalURL)} />
+
+    <!-- RSS Discovery -->
+    <link rel="alternate" type="application/rss+xml" title="IT UNIVERSE RSS Feed" href="/rss.xml" />
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'IT UNIVERSE',
+        url: canonicalURL.origin,
+        description: description,
+        inLanguage: 'vi-VN',
+        author: {
+          '@type': 'Person',
+          name: 'Khánh',
+          jobTitle: 'Software Engineer',
+          url: canonicalURL.origin,
+        },
+      })}
+    />
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Skip to content for Accessibility (a11y) -->
+    <a href="#main-content" class="skip-to-content">Chuyển đến nội dung chính</a>
+
+    <!-- Cosmic Canvas Starfield (Phase 6) -->
+    <StarfieldCanvas />
+
+    <!-- Mouse-follow Cosmic Glow (Phase 6) -->
+    <MouseGlow />
+
+    <!-- Cosmic Background Ambience -->
+    <div class="cosmic-bg-overlay" aria-hidden="true">
+      <div class="nebula-spot spot-1"></div>
+      <div class="nebula-spot spot-2"></div>
+      <div class="nebula-spot spot-3"></div>
+      <div class="cosmic-grid-overlay"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <Navbar />
+
+    <!-- Main Content Slot -->
+    <main id="main-content" class="main-content">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+
+    <!-- Scroll Reveal Controller Script (Phase 6) -->
+    <script>
+      const initScrollReveal = () => {
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        if (!revealElements.length) return;
+
+        const observer = new IntersectionObserver(
+          (entries, obs) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-revealed');
+                obs.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            threshold: 0.1,
+            rootMargin: '0px 0px -40px 0px',
+          }
+        );
+
+        revealElements.forEach((el) => observer.observe(el));
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollReveal);
+      } else {
+        initScrollReveal();
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  /* Cosmic Background Layers */
+  .cosmic-bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .nebula-spot {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    mix-blend-mode: screen;
+  }
+
+  .spot-1 {
+    top: -10%;
+    left: 20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #55D6FF 0%, transparent 70%);
+    animation: cosmicFloat 18s ease-in-out infinite alternate;
+  }
+
+  .spot-2 {
+    bottom: 10%;
+    right: 15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #A78BFA 0%, transparent 70%);
+    animation: cosmicFloat 22s ease-in-out infinite alternate-reverse;
+  }
+
+  .spot-3 {
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, #648BFF 0%, transparent 75%);
+    opacity: 0.08;
+  }
+
+  /* Subtle Cosmic Grid overlay */
+  .cosmic-grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(85, 214, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(85, 214, 255, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 1) 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 1) 30%, transparent 80%);
+  }
+</style>

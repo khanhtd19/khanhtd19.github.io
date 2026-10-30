@@ -1,0 +1,384 @@
+---
+---
+
+<div class="orbital-experiment-wrapper glass-card">
+  <!-- Header Toolbar -->
+  <div class="experiment-toolbar">
+    <div class="toolbar-left">
+      <span class="toolbar-indicator live-dot"></span>
+      <span class="toolbar-title text-mono">ORBITAL_PHYSICS_ENGINE // 60_FPS</span>
+    </div>
+
+    <div class="toolbar-controls">
+      <!-- Speed Buttons -->
+      <div class="speed-control-group">
+        <span class="control-label text-mono">Tốc độ:</span>
+        <button type="button" class="speed-btn text-mono" data-speed="0.5">0.5x</button>
+        <button type="button" class="speed-btn text-mono is-active" data-speed="1">1x</button>
+        <button type="button" class="speed-btn text-mono" data-speed="2">2x</button>
+        <button type="button" class="speed-btn text-mono" data-speed="4">4x</button>
+      </div>
+
+      <!-- Trails Toggle -->
+      <button type="button" class="tool-btn" id="orbital-trail-toggle">
+        <span id="trail-toggle-text">Ẩn vệt sáng</span>
+      </button>
+
+      <!-- Reset -->
+      <button type="button" class="tool-btn" id="orbital-reset-btn">
+        <span>↺ Mặc định</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Canvas Viewport -->
+  <div class="canvas-viewport" id="orbital-viewport">
+    <canvas id="orbital-canvas"></canvas>
+    <div class="viewport-overlay text-mono">
+      <span>✦ Nhấp chuột vào không gian để thả thêm một vệ tinh / tiểu hành tinh mới vào quỹ đạo</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .orbital-experiment-wrapper {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-color: rgba(167, 139, 250, 0.3);
+  }
+
+  .experiment-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.4rem;
+    background: rgba(7, 11, 24, 0.85);
+    border-bottom: 1px solid var(--color-border-glass);
+  }
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-cosmic-violet);
+    box-shadow: 0 0 8px var(--color-cosmic-violet);
+  }
+
+  .toolbar-title {
+    font-size: 0.8rem;
+    color: var(--color-cosmic-violet);
+    letter-spacing: 0.05em;
+  }
+
+  .toolbar-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .control-label {
+    font-size: 0.75rem;
+    color: var(--color-muted-text);
+  }
+
+  .speed-control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .speed-btn {
+    padding: 0.25rem 0.55rem;
+    font-size: 0.75rem;
+    color: var(--color-muted-text);
+    background: rgba(18, 28, 52, 0.7);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .speed-btn:hover {
+    color: var(--color-starlight);
+    border-color: var(--color-cosmic-violet);
+  }
+
+  .speed-btn.is-active {
+    color: var(--color-deep-space);
+    background: var(--color-cosmic-violet);
+    border-color: var(--color-cosmic-violet);
+    font-weight: 600;
+  }
+
+  .tool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.78rem;
+    color: var(--color-starlight);
+    background: rgba(18, 28, 52, 0.8);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .tool-btn:hover {
+    color: var(--color-cosmic-violet);
+    border-color: var(--color-cosmic-violet);
+  }
+
+  /* Viewport */
+  .canvas-viewport {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background: radial-gradient(circle at 50% 50%, rgba(18, 28, 52, 0.5) 0%, rgba(7, 11, 24, 0.98) 100%);
+    cursor: crosshair;
+  }
+
+  #orbital-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .viewport-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.5rem;
+    font-size: 0.78rem;
+    color: rgba(154, 170, 196, 0.75);
+    pointer-events: none;
+    background: rgba(7, 11, 24, 0.65);
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+  }
+</style>
+
+<script>
+  interface CelestialBody {
+    name: string;
+    radius: number;
+    orbitRadius: number;
+    angle: number;
+    speed: number;
+    color: string;
+    glow: string;
+    isCustom?: boolean;
+  }
+
+  const canvas = document.getElementById('orbital-canvas') as HTMLCanvasElement | null;
+  const viewport = document.getElementById('orbital-viewport');
+  const speedButtons = document.querySelectorAll<HTMLButtonElement>('.speed-btn');
+  const trailToggle = document.getElementById('orbital-trail-toggle');
+  const trailText = document.getElementById('trail-toggle-text');
+  const resetBtn = document.getElementById('orbital-reset-btn');
+
+  if (canvas && viewport) {
+    const ctx = canvas.getContext('2d');
+    let width = 0;
+    let height = 0;
+    let speedMultiplier = 1;
+    let showTrails = true;
+    let animId = 0;
+
+    let bodies: CelestialBody[] = [];
+
+    function initDefaultBodies() {
+      bodies = [
+        {
+          name: 'Proxima',
+          radius: 4,
+          orbitRadius: 55,
+          angle: 0.5,
+          speed: 0.035,
+          color: '#55D6FF',
+          glow: 'rgba(85, 214, 255, 0.6)',
+        },
+        {
+          name: 'Terra',
+          radius: 6,
+          orbitRadius: 95,
+          angle: 1.8,
+          speed: 0.022,
+          color: '#34D399',
+          glow: 'rgba(52, 211, 153, 0.5)',
+        },
+        {
+          name: 'Ares',
+          radius: 5,
+          orbitRadius: 135,
+          angle: 3.2,
+          speed: 0.016,
+          color: '#F87171',
+          glow: 'rgba(248, 113, 113, 0.5)',
+        },
+        {
+          name: 'Zeus',
+          radius: 11,
+          orbitRadius: 180,
+          angle: 4.5,
+          speed: 0.009,
+          color: '#FBBF24',
+          glow: 'rgba(251, 191, 36, 0.4)',
+        },
+        {
+          name: 'Chroma',
+          radius: 7,
+          orbitRadius: 220,
+          angle: 5.6,
+          speed: 0.006,
+          color: '#A78BFA',
+          glow: 'rgba(167, 139, 250, 0.5)',
+        },
+      ];
+    }
+
+    function resize() {
+      if (!canvas || !viewport) return;
+      const dpr = window.devicePixelRatio || 1;
+      width = viewport.clientWidth;
+      height = viewport.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    }
+
+    function renderLoop() {
+      if (!ctx) return;
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      // Trail fade effect vs clear
+      if (showTrails) {
+        ctx.fillStyle = 'rgba(7, 11, 24, 0.15)';
+        ctx.fillRect(0, 0, width, height);
+      } else {
+        ctx.clearRect(0, 0, width, height);
+      }
+
+      // Draw Orbit Lines
+      bodies.forEach((b) => {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, b.orbitRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(154, 170, 196, 0.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // Draw Central Star (Core Sun)
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 22, 0, Math.PI * 2);
+      const starGrad = ctx.createRadialGradient(centerX, centerY, 4, centerX, centerY, 22);
+      starGrad.addColorStop(0, '#FFFFFF');
+      starGrad.addColorStop(0.3, '#55D6FF');
+      starGrad.addColorStop(0.7, '#648BFF');
+      starGrad.addColorStop(1, '#070B18');
+      ctx.fillStyle = starGrad;
+      ctx.shadowBlur = 30;
+      ctx.shadowColor = '#55D6FF';
+      ctx.fill();
+      ctx.shadowBlur = 0; // reset
+
+      // Update and Draw Planets
+      bodies.forEach((b) => {
+        b.angle += b.speed * speedMultiplier;
+
+        const posX = centerX + Math.cos(b.angle) * b.orbitRadius;
+        const posY = centerY + Math.sin(b.angle) * b.orbitRadius;
+
+        ctx.beginPath();
+        ctx.arc(posX, posY, b.radius, 0, Math.PI * 2);
+        ctx.fillStyle = b.color;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = b.glow;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Planet Label
+        ctx.fillStyle = 'rgba(234, 242, 255, 0.6)';
+        ctx.font = '10px monospace';
+        ctx.fillText(b.name, posX + b.radius + 4, posY + 3);
+      });
+
+      animId = requestAnimationFrame(renderLoop);
+    }
+
+    // Click to spawn body
+    viewport.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      const dx = clickX - width / 2;
+      const dy = clickY - height / 2;
+      const orbitR = Math.sqrt(dx * dx + dy * dy);
+
+      if (orbitR < 30 || orbitR > Math.max(width, height) / 2) return;
+
+      const angle = Math.atan2(dy, dx);
+      const colors = ['#EAF2FF', '#55D6FF', '#A78BFA', '#F472B6', '#34D399'];
+      const pickColor = colors[Math.floor(Math.random() * colors.length)];
+
+      bodies.push({
+        name: `Sat-${bodies.length + 1}`,
+        radius: Math.random() * 3 + 3,
+        orbitRadius: orbitR,
+        angle: angle,
+        speed: (Math.random() * 0.01 + 0.008) * (Math.random() > 0.5 ? 1 : -1),
+        color: pickColor,
+        glow: pickColor,
+        isCustom: true,
+      });
+    });
+
+    // Speed Controls
+    speedButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        speedButtons.forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        speedMultiplier = parseFloat(btn.getAttribute('data-speed') || '1');
+      });
+    });
+
+    // Trails Toggle
+    if (trailToggle) {
+      trailToggle.addEventListener('click', () => {
+        showTrails = !showTrails;
+        if (trailText) {
+          trailText.textContent = showTrails ? 'Ẩn vệt sáng' : 'Hiện vệt sáng';
+        }
+      });
+    }
+
+    // Reset
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        initDefaultBodies();
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      resize();
+    });
+
+    resize();
+    initDefaultBodies();
+    renderLoop();
+  }
+</script>

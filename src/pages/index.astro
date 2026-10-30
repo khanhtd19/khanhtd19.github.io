@@ -1,0 +1,432 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroUniverse from '../components/HeroUniverse.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projectsData } from '../data/projects';
+import { featuredSkills } from '../data/skills';
+import { getCollection } from 'astro:content';
+
+const featuredProjects = projectsData.filter((p) => p.featured);
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const latestPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout
+  title="IT UNIVERSE — Vũ Trụ Công Nghệ & Kỹ Thuật Phần Mềm"
+  description="Portfolio cá nhân phong cách Cosmic Universe — Trưng bày các dự án công nghệ, bài viết lập trình và thử nghiệm AI sáng tạo."
+>
+  <!-- Hero Section & Stats (PRD Section 2.1) -->
+  <HeroUniverse />
+
+  <!-- Featured Skills Banner -->
+  <section class="section skills-section scroll-reveal">
+    <div class="container">
+      <div class="skills-banner glass-card">
+        <div class="skills-banner-header">
+          <span class="cosmic-badge">CORE TECH STACK</span>
+          <h2 class="skills-banner-title">Kỹ Năng &amp; Công Nghệ Chủ Đạo</h2>
+        </div>
+        <div class="skills-tags-cloud">
+          {featuredSkills.map((skill) => (
+            <div class="skill-pill">
+              <span class="skill-dot">✦</span>
+              <span class="skill-name">{skill}</span>
+            </div>
+          ))}
+        </div>
+        <div class="skills-banner-footer">
+          <a href="/about#skills" class="btn-text-link">
+            <span>Xem toàn bộ ma trận kỹ năng chi tiết</span>
+            <span class="link-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Projects Section (PRD Section 2.1) -->
+  <section class="section projects-section scroll-reveal">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-wrapper">
+          <span class="cosmic-badge">FEATURED WORK</span>
+          <h2 class="section-title">
+            Dự Án <span class="text-gradient">Tiêu Biểu</span>
+          </h2>
+          <p class="section-subtitle">
+            Các sản phẩm phần mềm và giải pháp ứng dụng được thiết kế tối ưu hiệu năng và trải nghiệm người dùng.
+          </p>
+        </div>
+        <div class="section-action">
+          <a href="/projects" class="btn-cosmic-outline">
+            <span>Xem tất cả dự án ({projectsData.length})</span>
+            <span class="arrow-symbol">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="projects-grid">
+        {featuredProjects.map((project) => (
+          <ProjectCard project={project} featured={true} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Posts Section (PRD Section 2.1) -->
+  <section class="section posts-section scroll-reveal">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-wrapper">
+          <span class="cosmic-badge">KNOWLEDGE LOGS</span>
+          <h2 class="section-title">
+            Bài Viết <span class="text-gradient">Mới Nhất</span>
+          </h2>
+          <p class="section-subtitle">
+            Chia sẻ kinh nghiệm lập trình, kiến trúc hệ thống và những thử nghiệm công nghệ.
+          </p>
+        </div>
+        <div class="section-action">
+          <a href="/posts" class="btn-cosmic-outline">
+            <span>Xem tất cả bài viết</span>
+            <span class="arrow-symbol">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="posts-grid">
+        {latestPosts.map((post, i) => (
+          <article class:list={['post-card glass-card scroll-reveal', `reveal-delay-${i + 1}`]}>
+            <div class="post-card-meta">
+              <span class="post-category text-mono">{post.data.category}</span>
+              <time class="post-date text-mono" datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('vi-VN', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </time>
+            </div>
+
+            <h3 class="post-title">
+              <a href={`/posts/${post.id}`}>{post.data.title}</a>
+            </h3>
+
+            <p class="post-desc">{post.data.description}</p>
+
+            <div class="post-card-footer">
+              <div class="post-tags">
+                {post.data.tags.slice(0, 2).map((tag) => (
+                  <span class="post-tag">#{tag}</span>
+                ))}
+              </div>
+              <a href={`/posts/${post.id}`} class="read-more-link">
+                <span>Đọc bài</span>
+                <span class="arrow-icon">→</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Connect Callout CTA -->
+  <section class="section cta-section scroll-reveal">
+    <div class="container">
+      <div class="glass-card cta-banner">
+        <div class="cta-glow-bg" aria-hidden="true"></div>
+        <div class="cta-content">
+          <span class="cosmic-badge">READY TO COLLABORATE</span>
+          <h2 class="cta-title">
+            Khởi Động Dự Án Cùng <span class="text-gradient">IT UNIVERSE</span>
+          </h2>
+          <p class="cta-text">
+            Bạn có ý tưởng dự án hoặc đang tìm kiếm một kỹ sư phần mềm tâm huyết? Hãy cùng kết nối để hiện thực hóa các giải pháp số ấn tượng.
+          </p>
+          <div class="cta-buttons">
+            <a href="/contact" class="btn-cosmic-primary">
+              <span>Đến Trạm Liên Hệ</span>
+              <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </a>
+            <a href="/about" class="btn-cosmic-outline">
+              <span>Tìm hiểu thêm về tôi</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section {
+    padding: 4.5rem 0;
+  }
+
+  /* Section Header */
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .section-header {
+      flex-direction: row;
+      align-items: flex-end;
+    }
+  }
+
+  .section-title {
+    margin-top: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-subtitle {
+    max-width: 580px;
+    font-size: 1rem;
+    color: var(--color-muted-text);
+  }
+
+  /* Skills Banner */
+  .skills-banner {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: linear-gradient(135deg, rgba(18, 28, 52, 0.75) 0%, rgba(13, 20, 40, 0.9) 100%);
+  }
+
+  .skills-banner-title {
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .skills-tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .skill-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.1rem;
+    background: rgba(85, 214, 255, 0.06);
+    border: 1px solid rgba(85, 214, 255, 0.2);
+    border-radius: var(--radius-full);
+    color: var(--color-starlight);
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .skill-pill:hover {
+    border-color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.14);
+    box-shadow: 0 0 12px var(--color-cyan-glow);
+    transform: translateY(-2px);
+  }
+
+  .skill-dot {
+    color: var(--color-cosmic-cyan);
+    font-size: 0.75rem;
+  }
+
+  .skills-banner-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--color-cosmic-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .btn-text-link:hover .link-arrow {
+    transform: translateX(4px);
+  }
+
+  .link-arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  /* Projects Grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .projects-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Posts Grid */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .posts-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .post-card {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .post-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+  }
+
+  .post-category {
+    color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.08);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+  }
+
+  .post-date {
+    color: var(--color-muted-text);
+  }
+
+  .post-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .post-title a {
+    color: var(--color-starlight);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .post-title a:hover {
+    color: var(--color-cosmic-cyan);
+  }
+
+  .post-desc {
+    font-size: 0.9rem;
+    color: var(--color-muted-text);
+    line-height: 1.6;
+    flex-grow: 1;
+  }
+
+  .post-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(154, 170, 196, 0.1);
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .post-tag {
+    font-size: 0.72rem;
+    color: var(--color-muted-text);
+  }
+
+  .read-more-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-cosmic-cyan);
+    text-decoration: none;
+  }
+
+  .read-more-link:hover .arrow-icon {
+    transform: translateX(3px);
+  }
+
+  .arrow-icon {
+    transition: transform var(--transition-fast);
+  }
+
+  /* CTA Banner */
+  .cta-banner {
+    position: relative;
+    padding: 4rem 2rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .cta-glow-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(100, 139, 255, 0.2) 0%, rgba(167, 139, 250, 0.1) 45%, transparent 70%);
+    filter: blur(50px);
+    pointer-events: none;
+  }
+
+  .cta-content {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .cta-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  }
+
+  .cta-text {
+    font-size: 1.05rem;
+    color: var(--color-muted-text);
+    line-height: 1.7;
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.8rem;
+  }
+</style>

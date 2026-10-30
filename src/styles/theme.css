@@ -1,0 +1,51 @@
+:root {
+  /* Cosmic Universe Color Palette (PRD Section 3.1) */
+  --color-deep-space: #070B18;
+  --color-dark-navy: #0D1428;
+  --color-surface: #121C34;
+  --color-surface-glass: rgba(18, 28, 52, 0.65);
+  --color-surface-hover: rgba(26, 40, 75, 0.7);
+  --color-surface-active: rgba(35, 55, 102, 0.8);
+
+  --color-cosmic-cyan: #55D6FF;
+  --color-electric-blue: #648BFF;
+  --color-cosmic-violet: #A78BFA;
+  --color-starlight: #EAF2FF;
+  --color-muted-text: #9AAAC4;
+
+  /* Transparent / Glow Variants */
+  --color-cyan-glow: rgba(85, 214, 255, 0.35);
+  --color-electric-glow: rgba(100, 139, 255, 0.35);
+  --color-violet-glow: rgba(167, 139, 250, 0.35);
+  --color-border-glass: rgba(85, 214, 255, 0.15);
+  --color-border-glow: rgba(85, 214, 255, 0.45);
+  --color-border-muted: rgba(154, 170, 196, 0.18);
+
+  /* Gradients */
+  --grad-cosmic-primary: linear-gradient(135deg, #55D6FF 0%, #648BFF 50%, #A78BFA 100%);
+  --grad-cosmic-text: linear-gradient(90deg, #55D6FF 0%, #EAF2FF 50%, #A78BFA 100%);
+  --grad-card-overlay: linear-gradient(180deg, rgba(85, 214, 255, 0.04) 0%, rgba(18, 28, 52, 0.8) 100%);
+  --grad-surface-subtle: linear-gradient(145deg, rgba(18, 28, 52, 0.8) 0%, rgba(13, 20, 40, 0.95) 100%);
+
+  /* Typography (PRD Section 3.2) */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 72px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows & Glows */
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  --shadow-neon-cyan: 0 0 20px rgba(85, 214, 255, 0.35);
+  --shadow-neon-violet: 0 0 20px rgba(167, 139, 250, 0.35);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}

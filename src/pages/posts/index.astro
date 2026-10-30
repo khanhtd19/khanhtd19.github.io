@@ -1,0 +1,642 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { getReadingTime } from '../../utils/readingTime';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+
+// Sort newest first
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Collect all categories & tags
+const categories = ['Tất cả', ...new Set(sortedPosts.map((p) => p.data.category))];
+const tags = [...new Set(sortedPosts.flatMap((p) => p.data.tags))];
+
+// Pre-calculate reading times
+const postsWithMeta = sortedPosts.map((post) => ({
+  ...post,
+  readingTime: getReadingTime(post.body || ''),
+}));
+---
+
+<BaseLayout
+  title="Nhật Ký Công Nghệ & Bài Viết — IT UNIVERSE"
+  description="Chia sẻ kiến thức chuyên sâu về Astro, TypeScript, phát triển web hiện đại, đồ họa Canvas và các thử nghiệm AI."
+>
+  <div class="container posts-archive-page">
+    <!-- Header -->
+    <header class="page-header">
+      <span class="cosmic-badge">KNOWLEDGE REPOSITORY</span>
+      <h1 class="page-title">
+        Nhật Ký <span class="text-gradient">Công Nghệ</span>
+      </h1>
+      <p class="page-description">
+        Kho lưu trữ các bài viết kỹ thuật, tài liệu phân tích kiến trúc phần mềm và những thử nghiệm thực chiến trong vũ trụ lập trình.
+      </p>
+    </header>
+
+    <!-- Search & Filter Controls Bar (PRD Section 2.4) -->
+    <section class="controls-section" aria-label="Tìm kiếm và bộ lọc bài viết">
+      <div class="glass-card controls-card">
+        <!-- Search Input -->
+        <div class="search-box-wrapper">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="search"
+            id="search-input"
+            class="search-input"
+            placeholder="Tìm kiếm theo tiêu đề, mô tả hoặc từ khóa..."
+            aria-label="Tìm kiếm bài viết"
+          />
+          <button type="button" id="clear-search-btn" class="clear-search-btn" aria-label="Xóa tìm kiếm" style="display: none;">
+            ✕
+          </button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="filter-row">
+          <span class="filter-label text-mono">Danh mục:</span>
+          <div class="category-buttons" id="category-filters">
+            {categories.map((cat, i) => (
+              <button
+                type="button"
+                class:list={['category-chip', { 'is-active': i === 0 }]}
+                data-category={cat === 'Tất cả' ? 'all' : cat}
+              >
+                <span>{cat}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- Tags Cloud -->
+        {tags.length > 0 && (
+          <div class="tags-filter-row">
+            <span class="filter-label text-mono">Thẻ tag:</span>
+            <div class="tags-cloud" id="tag-filters">
+              {tags.map((tag) => (
+                <button
+                  type="button"
+                  class="tag-filter-btn"
+                  data-tag={tag}
+                >
+                  #{tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- Post Stats & Result Count -->
+    <div class="results-meta">
+      <span id="results-count" class="text-mono">Hiển thị {sortedPosts.length} bài viết</span>
+      <button type="button" id="reset-all-filters" class="reset-link" style="display: none;">
+        Đặt lại bộ lọc
+      </button>
+    </div>
+
+    <!-- Posts Grid -->
+    <section class="posts-grid-container" aria-label="Danh sách bài viết">
+      <div class="posts-grid" id="posts-grid">
+        {postsWithMeta.map((post, index) => (
+          <article
+            class:list={['glass-card post-card-item', { 'is-first': index === 0 }]}
+            data-title={post.data.title.toLowerCase()}
+            data-description={post.data.description.toLowerCase()}
+            data-category={post.data.category}
+            data-tags={post.data.tags.join(',')}
+          >
+            <div class="card-neon-top" aria-hidden="true"></div>
+
+            <div class="card-meta">
+              <span class="category-badge text-mono">{post.data.category}</span>
+              <div class="time-meta">
+                <span class="reading-time text-mono">⏳ {post.readingTime}</span>
+                <span class="dot">&bull;</span>
+                <time class="pub-date text-mono" datetime={post.data.pubDate.toISOString()}>
+                  {post.data.pubDate.toLocaleDateString('vi-VN', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+            </div>
+
+            <h2 class="post-card-title">
+              <a href={`/posts/${post.id}`}>{post.data.title}</a>
+            </h2>
+
+            <p class="post-card-excerpt">{post.data.description}</p>
+
+            <div class="post-card-footer">
+              <div class="tags-container">
+                {post.data.tags.map((tag: string) => (
+                  <span class="tag-pill">#{tag}</span>
+                ))}
+              </div>
+
+              <a href={`/posts/${post.id}`} class="read-article-link">
+                <span>Đọc bài</span>
+                <span class="arrow">→</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state glass-card" id="empty-posts-state" style="display: none;">
+        <div class="empty-icon">🛰️</div>
+        <h3 class="empty-title">Không tìm thấy bài viết phù hợp</h3>
+        <p class="empty-desc">
+          Thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc danh mục/thẻ tag.
+        </p>
+        <button type="button" class="btn-cosmic-primary" id="empty-reset-btn">
+          Khôi phục tất cả bài viết
+        </button>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .posts-archive-page {
+    padding-top: 3.5rem;
+    padding-bottom: 5.5rem;
+  }
+
+  .page-header {
+    text-align: center;
+    max-width: 750px;
+    margin: 0 auto 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .page-title {
+    margin-top: 0.3rem;
+  }
+
+  .page-description {
+    font-size: 1.05rem;
+    color: var(--color-muted-text);
+    line-height: 1.7;
+  }
+
+  /* Controls Card */
+  .controls-section {
+    margin-bottom: 2rem;
+  }
+
+  .controls-card {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .search-box-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1.1rem;
+    color: var(--color-cosmic-cyan);
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.85rem 2.8rem 0.85rem 3.2rem;
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    color: var(--color-starlight);
+    background: rgba(7, 11, 24, 0.75);
+    border: 1px solid var(--color-border-glow);
+    border-radius: var(--radius-full);
+    outline: none;
+    transition: all var(--transition-fast);
+  }
+
+  .search-input:focus {
+    border-color: var(--color-cosmic-cyan);
+    box-shadow: 0 0 15px var(--color-cyan-glow);
+  }
+
+  .search-input::placeholder {
+    color: rgba(154, 170, 196, 0.6);
+  }
+
+  .clear-search-btn {
+    position: absolute;
+    right: 1.1rem;
+    background: transparent;
+    border: none;
+    color: var(--color-muted-text);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.2rem;
+  }
+
+  .clear-search-btn:hover {
+    color: var(--color-cosmic-cyan);
+  }
+
+  /* Filters */
+  .filter-row,
+  .tags-filter-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  @media (min-width: 640px) {
+    .filter-row,
+    .tags-filter-row {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .filter-label {
+    font-size: 0.82rem;
+    color: var(--color-cosmic-cyan);
+    white-space: nowrap;
+    min-width: 75px;
+  }
+
+  .category-buttons,
+  .tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .category-chip {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-muted-text);
+    background: rgba(18, 28, 52, 0.7);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .category-chip:hover {
+    color: var(--color-starlight);
+    border-color: var(--color-cosmic-cyan);
+  }
+
+  .category-chip.is-active {
+    color: var(--color-deep-space);
+    background: var(--color-cosmic-cyan);
+    border-color: var(--color-cosmic-cyan);
+    font-weight: 600;
+    box-shadow: 0 0 10px var(--color-cyan-glow);
+  }
+
+  .tag-filter-btn {
+    padding: 0.25rem 0.65rem;
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--color-muted-text);
+    background: rgba(85, 214, 255, 0.05);
+    border: 1px solid rgba(85, 214, 255, 0.15);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .tag-filter-btn:hover {
+    color: var(--color-cosmic-cyan);
+    border-color: var(--color-cosmic-cyan);
+  }
+
+  .tag-filter-btn.is-active {
+    color: var(--color-deep-space);
+    background: var(--color-cosmic-violet);
+    border-color: var(--color-cosmic-violet);
+    font-weight: 600;
+  }
+
+  /* Results Meta */
+  .results-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--color-muted-text);
+  }
+
+  .reset-link {
+    background: transparent;
+    border: none;
+    color: var(--color-cosmic-cyan);
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-decoration: underline;
+  }
+
+  /* Grid */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .posts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1050px) {
+    .posts-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .post-card-item {
+    position: relative;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: hidden;
+  }
+
+  .card-neon-top {
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-cosmic-cyan), transparent);
+    opacity: 0.6;
+    transition: opacity var(--transition-fast);
+  }
+
+  .post-card-item:hover .card-neon-top {
+    opacity: 1;
+    box-shadow: 0 0 10px var(--color-cosmic-cyan);
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+  }
+
+  .category-badge {
+    color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.08);
+    border: 1px solid rgba(85, 214, 255, 0.25);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+  }
+
+  .time-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-muted-text);
+  }
+
+  .post-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .post-card-title a {
+    color: var(--color-starlight);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .post-card-title a:hover {
+    color: var(--color-cosmic-cyan);
+  }
+
+  .post-card-excerpt {
+    font-size: 0.92rem;
+    color: var(--color-muted-text);
+    line-height: 1.6;
+    flex-grow: 1;
+  }
+
+  .post-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(154, 170, 196, 0.12);
+  }
+
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .tag-pill {
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--color-muted-text);
+  }
+
+  .read-article-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-cosmic-cyan);
+    text-decoration: none;
+  }
+
+  .read-article-link:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  .arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  /* Empty State */
+  .empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 2rem auto;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+  }
+
+  .empty-title {
+    font-size: 1.3rem;
+  }
+
+  .empty-desc {
+    color: var(--color-muted-text);
+    font-size: 0.95rem;
+  }
+</style>
+
+<script>
+  // Search, Category and Tag Filtering logic
+  const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+  const clearSearchBtn = document.getElementById('clear-search-btn');
+  const catButtons = document.querySelectorAll<HTMLButtonElement>('.category-chip');
+  const tagButtons = document.querySelectorAll<HTMLButtonElement>('.tag-filter-btn');
+  const postItems = document.querySelectorAll<HTMLElement>('.post-card-item');
+  const emptyState = document.getElementById('empty-posts-state');
+  const resultsCount = document.getElementById('results-count');
+  const resetFiltersBtn = document.getElementById('reset-all-filters');
+  const emptyResetBtn = document.getElementById('empty-reset-btn');
+
+  let activeCategory = 'all';
+  let activeTag = '';
+  let searchQuery = '';
+
+  // Check URL query param for initial tag or search
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialTag = urlParams.get('tag');
+  if (initialTag) {
+    activeTag = initialTag;
+    tagButtons.forEach((b) => {
+      if (b.getAttribute('data-tag') === initialTag) {
+        b.classList.add('is-active');
+      }
+    });
+  }
+
+  function applyFilters() {
+    let visible = 0;
+
+    postItems.forEach((item) => {
+      const title = item.getAttribute('data-title') || '';
+      const desc = item.getAttribute('data-description') || '';
+      const category = item.getAttribute('data-category') || '';
+      const tags = (item.getAttribute('data-tags') || '').split(',');
+
+      const matchSearch =
+        !searchQuery || title.includes(searchQuery) || desc.includes(searchQuery);
+      const matchCat = activeCategory === 'all' || category === activeCategory;
+      const matchTag = !activeTag || tags.includes(activeTag);
+
+      if (matchSearch && matchCat && matchTag) {
+        item.style.display = 'flex';
+        visible++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    if (resultsCount) {
+      resultsCount.textContent = `Hiển thị ${visible} bài viết`;
+    }
+
+    if (emptyState) {
+      emptyState.style.display = visible === 0 ? 'flex' : 'none';
+    }
+
+    const hasFilters =
+      activeCategory !== 'all' || Boolean(activeTag) || Boolean(searchQuery);
+    if (resetFiltersBtn) {
+      resetFiltersBtn.style.display = hasFilters ? 'inline-block' : 'none';
+    }
+    if (clearSearchBtn) {
+      clearSearchBtn.style.display = searchQuery ? 'inline-block' : 'none';
+    }
+  }
+
+  // Search input handler
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
+      applyFilters();
+    });
+  }
+
+  if (clearSearchBtn && searchInput) {
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      applyFilters();
+      searchInput.focus();
+    });
+  }
+
+  // Category handler
+  catButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      catButtons.forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      activeCategory = btn.getAttribute('data-category') || 'all';
+      applyFilters();
+    });
+  });
+
+  // Tag handler
+  tagButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.getAttribute('data-tag') || '';
+      if (activeTag === tag) {
+        activeTag = '';
+        btn.classList.remove('is-active');
+      } else {
+        tagButtons.forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        activeTag = tag;
+      }
+      applyFilters();
+    });
+  });
+
+  // Reset all
+  function resetAll() {
+    activeCategory = 'all';
+    activeTag = '';
+    searchQuery = '';
+    if (searchInput) searchInput.value = '';
+    catButtons.forEach((b, i) => {
+      if (i === 0) b.classList.add('is-active');
+      else b.classList.remove('is-active');
+    });
+    tagButtons.forEach((b) => b.classList.remove('is-active'));
+    applyFilters();
+  }
+
+  if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetAll);
+  if (emptyResetBtn) emptyResetBtn.addEventListener('click', resetAll);
+
+  // Initial trigger
+  applyFilters();
+</script>

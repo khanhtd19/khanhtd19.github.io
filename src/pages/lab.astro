@@ -1,0 +1,558 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ParticleNetwork from '../components/lab/ParticleNetwork.astro';
+import CyberTerminal from '../components/lab/CyberTerminal.astro';
+import OrbitalSimulator from '../components/lab/OrbitalSimulator.astro';
+import { labExperiments } from '../data/lab-experiments';
+---
+
+<BaseLayout
+  title="Digital Lab — Phòng Thí Nghiệm Sáng Tạo | IT UNIVERSE"
+  description="Không gian thực nghiệm đồ họa Canvas 2D, mô phỏng vật lý quỹ đạo và trình giả lập Cyber Terminal tương tác trực tiếp."
+>
+  <div class="container lab-page">
+    <!-- Lab Header -->
+    <header class="page-header">
+      <span class="cosmic-badge">EXPERIMENTAL PLAYGROUND</span>
+      <h1 class="page-title">
+        Digital <span class="text-gradient">Laboratory</span>
+      </h1>
+      <p class="page-description">
+        Khu vực nghiên cứu và thử nghiệm công nghệ sáng tạo. Nơi giao thoa giữa toán học giải thuật, đồ họa tương tác Canvas và trải nghiệm người dùng hiện đại.
+      </p>
+    </header>
+
+    <!-- Lab Switcher Navigation -->
+    <section class="lab-switcher-section" aria-label="Bộ chọn thử nghiệm">
+      <div class="glass-card switcher-card">
+        <div class="switcher-tabs" id="lab-tab-buttons">
+          <button type="button" class="tab-btn is-active" data-target="experiment-particle">
+            <span class="tab-icon">✨</span>
+            <div class="tab-info">
+              <span class="tab-title">Particle Network</span>
+              <span class="tab-cat text-mono">Canvas 2D &bull; 60 FPS</span>
+            </div>
+          </button>
+
+          <button type="button" class="tab-btn" data-target="experiment-terminal">
+            <span class="tab-icon">💻</span>
+            <div class="tab-info">
+              <span class="tab-title">Cyber Terminal</span>
+              <span class="tab-cat text-mono">Interactive Shell &bull; ZSH</span>
+            </div>
+          </button>
+
+          <button type="button" class="tab-btn" data-target="experiment-orbital">
+            <span class="tab-icon">🪐</span>
+            <div class="tab-info">
+              <span class="tab-title">Orbital Simulator</span>
+              <span class="tab-cat text-mono">Gravity Physics &bull; Trails</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Experiment Views -->
+    <section class="experiments-viewport-section">
+      <!-- 1. Particle Network -->
+      <div class="experiment-panel is-active" id="experiment-particle">
+        <div class="experiment-info-banner glass-card">
+          <div class="banner-meta">
+            <span class="category-tag text-mono">CANVAS GRAPHICS</span>
+            <span class="status-live-pill text-mono">● TƯƠNG TÁC THỰC TẾ</span>
+          </div>
+          <h2 class="exp-title">Mạng Lưới Hạt Tương Tác Chuột (Particle Network)</h2>
+          <p class="exp-desc">
+            Sử dụng thuật toán tính khoảng cách Euclid thời gian thực trong vòng lặp <code>requestAnimationFrame</code>. Các hạt năng lượng di chuyển tự do, tự động hút về con trỏ chuột và kích hoạt dây liên kết quang phổ Neon khi đạt cự ly phù hợp.
+          </p>
+          <div class="tech-row">
+            <span class="tech-label text-mono">Công nghệ:</span>
+            <div class="tech-tags">
+              <span class="badge-tech">HTML5 Canvas 2D</span>
+              <span class="badge-tech">Vector Math</span>
+              <span class="badge-tech">High-DPI Scaling</span>
+            </div>
+          </div>
+        </div>
+
+        <ParticleNetwork />
+      </div>
+
+      <!-- 2. Cyber Terminal -->
+      <div class="experiment-panel" id="experiment-terminal">
+        <div class="experiment-info-banner glass-card">
+          <div class="banner-meta">
+            <span class="category-tag text-mono">CLI &amp; SYSTEMS</span>
+            <span class="status-live-pill text-mono">● TƯƠNG TÁC THỰC TẾ</span>
+          </div>
+          <h2 class="exp-title">Trình Giả Lập Dòng Lệnh Vũ Trụ (Cosmic Cyber Terminal)</h2>
+          <p class="exp-desc">
+            Bảng điều khiển dòng lệnh Terminal giả lập trong trình duyệt. Người dùng có thể gõ các lệnh như <code>help</code>, <code>about</code>, <code>skills</code>, <code>projects</code>, <code>posts</code>, <code>matrix</code> hoặc <code>date</code> để tương tác với kho dữ liệu hệ thống.
+          </p>
+          <div class="tech-row">
+            <span class="tech-label text-mono">Công nghệ:</span>
+            <div class="tech-tags">
+              <span class="badge-tech">TypeScript</span>
+              <span class="badge-tech">Command Parser</span>
+              <span class="badge-tech">History Buffer</span>
+              <span class="badge-tech">Virtual DOM Output</span>
+            </div>
+          </div>
+        </div>
+
+        <CyberTerminal />
+      </div>
+
+      <!-- 3. Orbital Simulator -->
+      <div class="experiment-panel" id="experiment-orbital">
+        <div class="experiment-info-banner glass-card">
+          <div class="banner-meta">
+            <span class="category-tag text-mono">PHYSICS &amp; SIMULATION</span>
+            <span class="status-live-pill text-mono">● TƯƠNG TÁC THỰC TẾ</span>
+          </div>
+          <h2 class="exp-title">Mô Phỏng Trọng Lực &amp; Quỹ Đạo Thiên Thể (Orbital Simulator)</h2>
+          <p class="exp-desc">
+            Mô phỏng 2D chu kỳ chuyển động của các hành tinh quanh ngôi sao chủ. Bạn có thể thay đổi hệ số tốc độ (0.5x, 1x, 2x, 4x), bật/tắt vệt sáng quỹ đạo (orbital trails) hoặc nhấp chuột vào khung canvas để phóng thêm một vệ tinh mới vào hệ thống quỹ đạo.
+          </p>
+          <div class="tech-row">
+            <span class="tech-label text-mono">Công nghệ:</span>
+            <div class="tech-tags">
+              <span class="badge-tech">Canvas 2D API</span>
+              <span class="badge-tech">Trigonometric Orbit Engine</span>
+              <span class="badge-tech">Radial Gradients</span>
+            </div>
+          </div>
+        </div>
+
+        <OrbitalSimulator />
+      </div>
+    </section>
+
+    <!-- Lab Experiments Catalog / Upcoming Concepts -->
+    <section class="upcoming-section">
+      <div class="section-title-wrapper">
+        <span class="cosmic-badge">R&amp;D ROADMAP</span>
+        <h2 class="section-title">Hồ Sơ Nghiên Cứu <span class="text-gradient">Phòng Lab</span></h2>
+        <p class="section-sub">
+          Tổng quan các module nghiên cứu trong không gian số IT UNIVERSE và định hướng mở rộng tiếp theo.
+        </p>
+      </div>
+
+      <div class="catalog-grid">
+        {labExperiments.map((exp) => (
+          <div class="glass-card catalog-card">
+            <div class="card-header-row">
+              <span class="card-cat text-mono">{exp.category}</span>
+              <span class="card-status text-mono">{exp.status}</span>
+            </div>
+            <h3 class="card-title">{exp.title}</h3>
+            <p class="card-sub-title text-mono">{exp.subtitle}</p>
+            <p class="card-desc">{exp.description}</p>
+
+            <div class="card-features-list">
+              <h4 class="features-header">Tính năng trọng tâm:</h4>
+              <ul>
+                {exp.features.map((feat) => (
+                  <li>
+                    <span class="bullet">✦</span>
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="card-techs">
+              {exp.technologies.map((t) => (
+                <span class="tech-chip text-mono">{t}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <!-- Concept 4: AI & Audio Visualizer -->
+        <div class="glass-card catalog-card concept-card">
+          <div class="card-header-row">
+            <span class="card-cat text-mono">AI &amp; SOUND</span>
+            <span class="card-status status-research text-mono">● Đang nghiên cứu</span>
+          </div>
+          <h3 class="card-title">Audio Spectrum &amp; AI Neural Mesh</h3>
+          <p class="card-sub-title text-mono">Phân Tích Dải Tần Âm Thanh &amp; Mạng Nơ-ron</p>
+          <p class="card-desc">
+            Thử nghiệm kết hợp Web Audio API (AnalyserNode) và hiệu ứng thị giác mạng nơ-ron nhân tạo phản hồi trực tiếp theo tần số âm thanh vũ trụ.
+          </p>
+
+          <div class="card-features-list">
+            <h4 class="features-header">Mục tiêu phát triển:</h4>
+            <ul>
+              <li>
+                <span class="bullet">✦</span>
+                <span>Fast Fourier Transform (FFT) trích xuất dải tần thời gian thực</span>
+              </li>
+              <li>
+                <span class="bullet">✦</span>
+                <span>Shader/Canvas biến dạng hình học theo nhịp sóng</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card-techs">
+            <span class="tech-chip text-mono">Web Audio API</span>
+            <span class="tech-chip text-mono">GLSL Shaders</span>
+            <span class="tech-chip text-mono">Canvas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    padding-top: 3.5rem;
+    padding-bottom: 5.5rem;
+  }
+
+  .page-header {
+    text-align: center;
+    max-width: 750px;
+    margin: 0 auto 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .page-title {
+    margin-top: 0.3rem;
+  }
+
+  .page-description {
+    font-size: 1.05rem;
+    color: var(--color-muted-text);
+    line-height: 1.7;
+  }
+
+  /* Switcher */
+  .lab-switcher-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .switcher-card {
+    padding: 0.6rem;
+  }
+
+  .switcher-tabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .switcher-tabs {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 1.25rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transition-fast);
+  }
+
+  .tab-btn:hover {
+    background: rgba(85, 214, 255, 0.06);
+    border-color: rgba(85, 214, 255, 0.2);
+  }
+
+  .tab-btn.is-active {
+    background: rgba(18, 28, 52, 0.85);
+    border-color: var(--color-cosmic-cyan);
+    box-shadow: 0 0 15px var(--color-cyan-glow);
+  }
+
+  .tab-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .tab-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .tab-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-starlight);
+  }
+
+  .tab-btn.is-active .tab-title {
+    color: var(--color-cosmic-cyan);
+  }
+
+  .tab-cat {
+    font-size: 0.72rem;
+    color: var(--color-muted-text);
+  }
+
+  /* Experiment Panels */
+  .experiment-panel {
+    display: none;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeIn 250ms ease-out;
+  }
+
+  .experiment-panel.is-active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .experiment-info-banner {
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .banner-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .category-tag {
+    font-size: 0.75rem;
+    color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.08);
+    border: 1px solid rgba(85, 214, 255, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+  }
+
+  .status-live-pill {
+    font-size: 0.75rem;
+    color: #10B981;
+  }
+
+  .exp-title {
+    font-size: 1.35rem;
+    color: var(--color-starlight);
+  }
+
+  .exp-desc {
+    font-size: 0.95rem;
+    color: var(--color-muted-text);
+    line-height: 1.6;
+  }
+
+  .exp-desc code {
+    font-family: var(--font-mono);
+    color: var(--color-cosmic-cyan);
+    background: rgba(85, 214, 255, 0.1);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .tech-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.3rem;
+  }
+
+  .tech-label {
+    font-size: 0.78rem;
+    color: var(--color-muted-text);
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .badge-tech {
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--color-starlight);
+    background: rgba(18, 28, 52, 0.9);
+    border: 1px solid var(--color-border-glass);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Catalog / Upcoming */
+  .upcoming-section {
+    margin-top: 5rem;
+  }
+
+  .section-title-wrapper {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-title {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-sub {
+    color: var(--color-muted-text);
+    max-width: 650px;
+  }
+
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .catalog-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .catalog-card {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .concept-card {
+    border-style: dashed;
+    border-color: rgba(167, 139, 250, 0.35);
+  }
+
+  .card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+  }
+
+  .card-cat {
+    color: var(--color-cosmic-cyan);
+  }
+
+  .card-status {
+    color: #10B981;
+  }
+
+  .status-research {
+    color: var(--color-cosmic-violet);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    color: var(--color-starlight);
+  }
+
+  .card-sub-title {
+    font-size: 0.82rem;
+    color: var(--color-cosmic-cyan);
+  }
+
+  .card-desc {
+    font-size: 0.9rem;
+    color: var(--color-muted-text);
+    line-height: 1.6;
+  }
+
+  .card-features-list {
+    margin-top: 0.3rem;
+    padding: 0.8rem;
+    background: rgba(7, 11, 24, 0.45);
+    border-radius: var(--radius-md);
+  }
+
+  .features-header {
+    font-size: 0.8rem;
+    color: var(--color-starlight);
+    margin-bottom: 0.4rem;
+  }
+
+  .card-features-list ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .card-features-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    color: var(--color-muted-text);
+    line-height: 1.45;
+  }
+
+  .bullet {
+    color: var(--color-cosmic-cyan);
+    font-size: 0.65rem;
+    margin-top: 2px;
+  }
+
+  .card-techs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .tech-chip {
+    font-size: 0.72rem;
+    color: var(--color-starlight);
+    background: rgba(18, 28, 52, 0.8);
+    border: 1px solid var(--color-border-glass);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+  }
+</style>
+
+<script>
+  // Lab Tab Switcher Logic
+  const tabButtons = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
+  const panels = document.querySelectorAll<HTMLElement>('.experiment-panel');
+
+  tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach((b) => b.classList.remove('is-active'));
+      panels.forEach((p) => p.classList.remove('is-active'));
+
+      btn.classList.add('is-active');
+      const targetId = btn.getAttribute('data-target');
+      if (targetId) {
+        const targetPanel = document.getElementById(targetId);
+        if (targetPanel) {
+          targetPanel.classList.add('is-active');
+          // Dispatch window resize so canvas inside adjusts instantly
+          window.dispatchEvent(new Event('resize'));
+        }
+      }
+    });
+  });
+</script>

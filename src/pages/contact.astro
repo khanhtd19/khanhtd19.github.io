@@ -1,0 +1,496 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { profileData } from '../data/profile';
+import { socialLinks } from '../data/social-links';
+---
+
+<BaseLayout
+  title="Liên Hệ & Kết Nối — IT UNIVERSE"
+  description="Gửi tín hiệu liên lạc, kết nối trao đổi công nghệ và cơ hội hợp tác dự án cùng IT UNIVERSE."
+>
+  <div class="container contact-page">
+    <header class="page-header">
+      <span class="cosmic-badge">TRANSMISSION FREQUENCY</span>
+      <h1 class="page-title">
+        Trạm <span class="text-gradient">Liên Hệ</span>
+      </h1>
+      <p class="page-description">
+        Mọi ý tưởng sáng tạo đều bắt đầu từ một cuộc hội thoại. Hãy gửi tín hiệu để cùng trao đổi về dự án phần mềm hoặc các cơ hội hợp tác mới.
+      </p>
+    </header>
+
+    <div class="contact-grid">
+      <!-- Left Column: Direct Communication Card with Copy Email -->
+      <div class="glass-card contact-main-card scroll-reveal">
+        <div class="card-glow-line" aria-hidden="true"></div>
+
+        <div class="main-card-header">
+          <div class="status-indicator-live">
+            <span class="live-dot"></span>
+            <span class="live-text text-mono">TÍN HIỆU ĐANG KẾT NỐI (ONLINE)</span>
+          </div>
+          <h2 class="card-heading">Hộp Thư Trực Tiếp</h2>
+          <p class="card-subtext">
+            Cách nhanh nhất để liên hệ trực tiếp với tôi cho công việc hoặc trao đổi kỹ thuật:
+          </p>
+        </div>
+
+        <!-- Copy Email Widget (PRD Section 2.6) -->
+        <div class="email-copy-widget">
+          <div class="email-display">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" class="email-icon">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            <span class="email-address text-mono" id="email-text">{profileData.email}</span>
+          </div>
+
+          <div class="widget-actions">
+            <button
+              type="button"
+              class="btn-copy-email"
+              id="copy-email-btn"
+              aria-label="Sao chép địa chỉ email vào clipboard"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="copy-icon">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              <span id="copy-btn-text">Sao chép Email</span>
+            </button>
+
+            <a href={`mailto:${profileData.email}`} class="btn-send-mail">
+              <span>Mở ứng dụng thư</span>
+              <span class="arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Copy Notification Toast (Feedback) -->
+        <div class="copy-toast" id="copy-toast" aria-live="polite">
+          <span class="toast-icon">✓</span>
+          <span>Đã sao chép địa chỉ email vào bộ nhớ tạm!</span>
+        </div>
+
+        <!-- Details list -->
+        <div class="contact-details-list">
+          <div class="detail-item">
+            <span class="detail-label">Vị trí &amp; Múi giờ:</span>
+            <span class="detail-value text-mono">Việt Nam — UTC+7 (Indochina Time)</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Hình thức hợp tác:</span>
+            <span class="detail-value">Remote, Hybrid, Dự án Tự do &amp; Toàn thời gian</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Thời gian phản hồi:</span>
+            <span class="detail-value text-mono">Thường trong vòng 12 - 24 giờ</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Channels & Social Network Links -->
+      <div class="contact-side-col">
+        <div class="glass-card channels-card scroll-reveal reveal-delay-1">
+          <h3 class="channels-title">Mạng Lưới Kỹ Thuật Số</h3>
+          <p class="channels-desc">Theo dõi các kho lưu trữ mã nguồn, dự án mở và kết nối sự nghiệp:</p>
+
+          <div class="channels-list">
+            {socialLinks.map((social) => (
+              <a
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="channel-item"
+              >
+                <div class="channel-info">
+                  <span class="channel-name">{social.name}</span>
+                  {social.description && (
+                    <span class="channel-desc">{social.description}</span>
+                  )}
+                </div>
+                <div class="channel-arrow">↗</div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- FAQ / Collaboration Notice -->
+        <div class="glass-card faq-card">
+          <h3 class="faq-title">✦ Lưu Ý Kết Nối</h3>
+          <p class="faq-desc">
+            Không sử dụng form gửi mail tự động nhằm tránh thất lạc tin nhắn hoặc bị đánh dấu thư rác. Thư gửi trực tiếp qua địa chỉ email cá nhân luôn được tiếp nhận với độ bảo mật và phản hồi nhanh nhất.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .contact-page {
+    padding-top: 3.5rem;
+    padding-bottom: 5.5rem;
+  }
+
+  .page-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 3.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .page-title {
+    margin-top: 0.3rem;
+  }
+
+  .page-description {
+    font-size: 1.05rem;
+    color: var(--color-muted-text);
+    line-height: 1.7;
+  }
+
+  /* Grid Layout */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 850px) {
+    .contact-grid {
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 2.5rem;
+    }
+  }
+
+  /* Main Card */
+  .contact-main-card {
+    position: relative;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow: hidden;
+  }
+
+  .card-glow-line {
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-cosmic-cyan), transparent);
+    box-shadow: 0 0 10px var(--color-cosmic-cyan);
+  }
+
+  .status-indicator-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #10B981;
+    margin-bottom: 0.8rem;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 8px #10B981;
+    animation: starTwinkle 2s infinite ease-in-out;
+  }
+
+  .card-heading {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-subtext {
+    font-size: 0.95rem;
+    color: var(--color-muted-text);
+    line-height: 1.6;
+  }
+
+  /* Email Copy Widget */
+  .email-copy-widget {
+    background: rgba(7, 11, 24, 0.7);
+    border: 1px solid var(--color-border-glow);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    box-shadow: inset 0 0 20px rgba(85, 214, 255, 0.05);
+  }
+
+  .email-display {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(18, 28, 52, 0.6);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-sm);
+    color: var(--color-cosmic-cyan);
+    font-size: 1.05rem;
+    overflow-x: auto;
+  }
+
+  .email-icon {
+    flex-shrink: 0;
+  }
+
+  .widget-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .btn-copy-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-deep-space);
+    background: var(--color-cosmic-cyan);
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 0 12px var(--color-cyan-glow);
+  }
+
+  .btn-copy-email:hover {
+    background: var(--color-starlight);
+    box-shadow: 0 0 18px var(--color-cosmic-cyan);
+  }
+
+  .btn-send-mail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-starlight);
+    background: rgba(18, 28, 52, 0.8);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-send-mail:hover {
+    color: var(--color-cosmic-cyan);
+    border-color: var(--color-cosmic-cyan);
+    text-shadow: none;
+  }
+
+  .arrow {
+    font-size: 0.9rem;
+  }
+
+  /* Toast */
+  .copy-toast {
+    display: none;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid #10B981;
+    border-radius: var(--radius-sm);
+    color: #34D399;
+    font-size: 0.85rem;
+    animation: fadeIn 200ms ease;
+  }
+
+  .copy-toast.show {
+    display: flex;
+  }
+
+  .toast-icon {
+    font-weight: bold;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Details */
+  .contact-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    border-top: 1px solid rgba(154, 170, 196, 0.12);
+    padding-top: 1.5rem;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+  }
+
+  @media (min-width: 500px) {
+    .detail-item {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .detail-label {
+    color: var(--color-muted-text);
+  }
+
+  .detail-value {
+    color: var(--color-starlight);
+    font-weight: 500;
+  }
+
+  /* Side Col */
+  .contact-side-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .channels-card {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .channels-title {
+    font-size: 1.2rem;
+  }
+
+  .channels-desc {
+    font-size: 0.9rem;
+    color: var(--color-muted-text);
+    line-height: 1.6;
+  }
+
+  .channels-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .channel-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.1rem;
+    background: rgba(7, 11, 24, 0.5);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .channel-item:hover {
+    background: rgba(18, 28, 52, 0.8);
+    border-color: var(--color-cosmic-cyan);
+    transform: translateX(4px);
+  }
+
+  .channel-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-starlight);
+  }
+
+  .channel-desc {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--color-muted-text);
+    margin-top: 0.15rem;
+  }
+
+  .channel-arrow {
+    color: var(--color-cosmic-cyan);
+    font-size: 1.1rem;
+    transition: transform var(--transition-fast);
+  }
+
+  .channel-item:hover .channel-arrow {
+    transform: translate(2px, -2px);
+  }
+
+  /* FAQ */
+  .faq-card {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: rgba(18, 28, 52, 0.4);
+  }
+
+  .faq-title {
+    font-size: 1rem;
+    color: var(--color-cosmic-cyan);
+  }
+
+  .faq-desc {
+    font-size: 0.85rem;
+    color: var(--color-muted-text);
+    line-height: 1.6;
+  }
+</style>
+
+<script>
+  // Copy Email to Clipboard logic
+  const copyBtn = document.getElementById('copy-email-btn');
+  const copyBtnText = document.getElementById('copy-btn-text');
+  const emailTextEl = document.getElementById('email-text');
+  const copyToast = document.getElementById('copy-toast');
+
+  if (copyBtn && emailTextEl) {
+    copyBtn.addEventListener('click', async () => {
+      const email = emailTextEl.textContent?.trim() || '';
+      try {
+        await navigator.clipboard.writeText(email);
+        if (copyBtnText) copyBtnText.textContent = 'Đã sao chép!';
+        if (copyToast) {
+          copyToast.classList.add('show');
+          setTimeout(() => {
+            copyToast.classList.remove('show');
+            if (copyBtnText) copyBtnText.textContent = 'Sao chép Email';
+          }, 3500);
+        }
+      } catch (err) {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = email;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (copyBtnText) copyBtnText.textContent = 'Đã sao chép!';
+        if (copyToast) {
+          copyToast.classList.add('show');
+          setTimeout(() => {
+            copyToast.classList.remove('show');
+            if (copyBtnText) copyBtnText.textContent = 'Sao chép Email';
+          }, 3500);
+        }
+      }
+    });
+  }
+</script>

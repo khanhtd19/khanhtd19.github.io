@@ -1,0 +1,271 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projectsData, projectCategories } from '../data/projects';
+---
+
+<BaseLayout
+  title="Dự Án Phần Mềm & Thử Nghiệm — IT UNIVERSE"
+  description="Danh mục các dự án cá nhân, sản phẩm ứng dụng web, ứng dụng di động và công cụ AI được xây dựng theo phong cách vũ trụ số."
+>
+  <div class="container projects-page">
+    <!-- Header -->
+    <header class="page-header">
+      <span class="cosmic-badge">PORTFOLIO ARCHIVE</span>
+      <h1 class="page-title">
+        Hành Tinh <span class="text-gradient">Dự Án</span>
+      </h1>
+      <p class="page-description">
+        Khám phá các sản phẩm phần mềm, đồ án kỹ thuật và các thử nghiệm sáng tạo. Tất cả dự án đều có thông tin công nghệ, tính năng thực tế và mã nguồn mở.
+      </p>
+    </header>
+
+    <!-- Filter Buttons Bar (PRD Section 2.3) -->
+    <section class="filter-section" aria-label="Bộ lọc dự án">
+      <div class="filter-bar glass-card">
+        <span class="filter-label text-mono">Bộ lọc:</span>
+        <div class="filter-buttons" id="filter-buttons-container">
+          {projectCategories.map((cat, index) => (
+            <button
+              type="button"
+              class:list={['filter-btn', { 'is-active': index === 0 }]}
+              data-filter={cat.key}
+            >
+              <span>{cat.label}</span>
+              <span class="filter-count text-mono">
+                {cat.key === 'all'
+                  ? projectsData.length
+                  : projectsData.filter((p) => p.category === cat.key).length}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Grid Container -->
+    <section class="projects-container" aria-label="Danh sách dự án">
+      <div class="projects-grid" id="projects-grid">
+        {projectsData.map((project) => (
+          <div class="project-item" data-category={project.category}>
+            <ProjectCard project={project} />
+          </div>
+        ))}
+      </div>
+
+      <!-- Empty State Fallback -->
+      <div class="empty-state glass-card" id="empty-state" style="display: none;">
+        <div class="empty-icon">🛸</div>
+        <h3 class="empty-title">Không tìm thấy dự án</h3>
+        <p class="empty-desc">Chưa có dự án nào trong danh mục này hoặc dữ liệu đang được cập nhật.</p>
+        <button type="button" class="btn-cosmic-outline" id="reset-filter-btn">
+          Xem tất cả dự án
+        </button>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .projects-page {
+    padding-top: 3.5rem;
+    padding-bottom: 5.5rem;
+  }
+
+  .page-header {
+    text-align: center;
+    max-width: 750px;
+    margin: 0 auto 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .page-title {
+    margin-top: 0.3rem;
+  }
+
+  .page-description {
+    font-size: 1.05rem;
+    color: var(--color-muted-text);
+    line-height: 1.7;
+  }
+
+  /* Filter Bar */
+  .filter-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .filter-bar {
+    padding: 0.8rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 640px) {
+    .filter-bar {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .filter-label {
+    font-size: 0.82rem;
+    color: var(--color-cosmic-cyan);
+    white-space: nowrap;
+  }
+
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .filter-buttons {
+      width: auto;
+      justify-content: flex-end;
+    }
+  }
+
+  .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-muted-text);
+    background: rgba(18, 28, 52, 0.6);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .filter-btn:hover {
+    color: var(--color-starlight);
+    border-color: var(--color-cosmic-cyan);
+  }
+
+  .filter-btn.is-active {
+    color: var(--color-deep-space);
+    background: var(--color-cosmic-cyan);
+    border-color: var(--color-cosmic-cyan);
+    font-weight: 600;
+    box-shadow: 0 0 12px var(--color-cyan-glow);
+  }
+
+  .filter-count {
+    font-size: 0.72rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .filter-btn.is-active .filter-count {
+    background: rgba(7, 11, 24, 0.25);
+    color: var(--color-deep-space);
+  }
+
+  /* Projects Grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .projects-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .project-item {
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+  }
+
+  /* Empty State */
+  .empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 2rem auto;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+  }
+
+  .empty-title {
+    font-size: 1.3rem;
+  }
+
+  .empty-desc {
+    color: var(--color-muted-text);
+    font-size: 0.95rem;
+  }
+</style>
+
+<script>
+  // Client-side filtering logic
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const projectItems = document.querySelectorAll<HTMLElement>('.project-item');
+  const emptyState = document.getElementById('empty-state');
+  const resetBtn = document.getElementById('reset-filter-btn');
+
+  function filterProjects(selectedCategory: string) {
+    let visibleCount = 0;
+
+    projectItems.forEach((item) => {
+      const category = item.getAttribute('data-category');
+      if (selectedCategory === 'all' || category === selectedCategory) {
+        item.style.display = 'block';
+        item.style.opacity = '1';
+        item.style.transform = 'translateY(0)';
+        visibleCount++;
+      } else {
+        item.style.display = 'none';
+        item.style.opacity = '0';
+      }
+    });
+
+    if (emptyState) {
+      emptyState.style.display = visibleCount === 0 ? 'flex' : 'none';
+    }
+  }
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+
+      const filterValue = btn.getAttribute('data-filter') || 'all';
+      filterProjects(filterValue);
+    });
+  });
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      const allBtn = document.querySelector<HTMLButtonElement>('[data-filter="all"]');
+      if (allBtn) {
+        allBtn.click();
+      }
+    });
+  }
+</script>

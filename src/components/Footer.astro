@@ -1,0 +1,353 @@
+---
+const currentYear = new Date().getFullYear();
+
+const footerNav = [
+  { label: 'Trang chủ', href: '/' },
+  { label: 'Giới thiệu', href: '/about' },
+  { label: 'Dự án', href: '/projects' },
+  { label: 'Bài viết', href: '/posts' },
+  { label: 'Digital Lab', href: '/lab' },
+  { label: 'Liên hệ', href: '/contact' },
+];
+
+const socialLinks = [
+  { label: 'GitHub', href: 'https://github.com', icon: 'github' },
+  { label: 'LinkedIn', href: 'https://linkedin.com', icon: 'linkedin' },
+  { label: 'Email', href: 'mailto:contact@ituniverse.dev', icon: 'email' },
+];
+---
+
+<footer class="footer-wrapper">
+  <div class="footer-glow-line"></div>
+  <div class="container footer-content">
+    <div class="footer-grid">
+      <!-- Column 1: Brand & Concept -->
+      <div class="footer-brand">
+        <a href="/" class="brand-link">
+          <div class="brand-icon">
+            <svg viewBox="0 0 32 32" fill="none" class="planet-svg" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="8" fill="url(#footerPlanetGrad)" />
+              <ellipse cx="16" cy="16" rx="14" ry="4.5" stroke="url(#footerRingGrad)" stroke-width="1.5" transform="rotate(-25 16 16)" />
+              <defs>
+                <radialGradient id="footerPlanetGrad" cx="30%" cy="30%" r="70%">
+                  <stop offset="0%" stop-color="#55D6FF" />
+                  <stop offset="60%" stop-color="#648BFF" />
+                  <stop offset="100%" stop-color="#121C34" />
+                </radialGradient>
+                <linearGradient id="footerRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#55D6FF" />
+                  <stop offset="100%" stop-color="#A78BFA" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="brand-text">
+            <span class="brand-primary">IT</span> UNIVERSE
+          </span>
+        </a>
+        <p class="brand-desc">
+          Cosmic Universe — Không gian trưng bày dự án lập trình, kiến thức công nghệ và những thử nghiệm sáng tạo với AI.
+        </p>
+        <div class="tech-pill">
+          <span class="pulse-dot"></span>
+          <span>Xây dựng bằng Astro & TypeScript</span>
+        </div>
+      </div>
+
+      <!-- Column 2: Navigation -->
+      <div class="footer-links-col">
+        <h4 class="col-title">Điều hướng</h4>
+        <ul class="col-list">
+          {footerNav.map((link) => (
+            <li>
+              <a href={link.href} class="footer-nav-link">
+                <span class="arrow-symbol">›</span>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Column 3: Tech Concept & Connect -->
+      <div class="footer-links-col">
+        <h4 class="col-title">Kết nối & Khám phá</h4>
+        <p class="connect-desc">
+          Sẵn sàng kết nối để cùng thảo luận về công nghệ, dự án phần mềm và ý tưởng sáng tạo.
+        </p>
+        <ul class="social-list">
+          {socialLinks.map((social) => (
+            <li>
+              <a href={social.href} target="_blank" rel="noopener noreferrer" class="social-link">
+                <span>{social.label}</span>
+                <span class="external-icon">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <p class="copyright">
+        © {currentYear} <span class="brand-primary">IT UNIVERSE</span>. Được thiết kế với phong cách Futuristic Cosmic.
+      </p>
+
+      <button id="back-to-top" class="back-to-top-btn" aria-label="Lên đầu trang">
+        <span>Đầu trang</span>
+        <svg viewBox="0 0 20 20" fill="currentColor" class="up-arrow" width="16" height="16">
+          <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-wrapper {
+    position: relative;
+    background: rgba(7, 11, 24, 0.95);
+    border-top: 1px solid var(--color-border-glass);
+    margin-top: 5rem;
+    overflow: hidden;
+  }
+
+  .footer-glow-line {
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--color-cosmic-cyan) 50%, transparent 100%);
+    opacity: 0.7;
+    filter: drop-shadow(0 0 8px var(--color-cosmic-cyan));
+  }
+
+  .footer-content {
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 2fr 1fr 1.5fr;
+      gap: 3rem;
+    }
+  }
+
+  /* Brand Col */
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    filter: drop-shadow(0 0 6px var(--color-cyan-glow));
+  }
+
+  .planet-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .brand-text {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--color-starlight);
+    letter-spacing: 0.05em;
+  }
+
+  .brand-primary {
+    color: var(--color-cosmic-cyan);
+  }
+
+  .brand-desc {
+    color: var(--color-muted-text);
+    font-size: 0.92rem;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  .tech-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    color: var(--color-cosmic-violet);
+    background: rgba(167, 139, 250, 0.08);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    border-radius: var(--radius-full);
+    width: fit-content;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-cosmic-violet);
+    box-shadow: 0 0 8px var(--color-cosmic-violet);
+    animation: starTwinkle 2s infinite ease-in-out;
+  }
+
+  /* Links Columns */
+  .col-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-starlight);
+    margin-bottom: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .col-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .footer-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.92rem;
+    color: var(--color-muted-text);
+    transition: all var(--transition-fast);
+  }
+
+  .arrow-symbol {
+    color: var(--color-cosmic-cyan);
+    font-weight: bold;
+    transition: transform var(--transition-fast);
+  }
+
+  .footer-nav-link:hover {
+    color: var(--color-starlight);
+    transform: translateX(4px);
+    text-shadow: none;
+  }
+
+  .footer-nav-link:hover .arrow-symbol {
+    transform: translateX(2px);
+  }
+
+  .connect-desc {
+    font-size: 0.92rem;
+    color: var(--color-muted-text);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .social-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    color: var(--color-starlight);
+    background: var(--color-surface-glass);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .social-link:hover {
+    color: var(--color-cosmic-cyan);
+    border-color: var(--color-cosmic-cyan);
+    box-shadow: 0 0 10px var(--color-cyan-glow);
+    text-shadow: none;
+    transform: translateY(-2px);
+  }
+
+  .external-icon {
+    font-size: 0.75rem;
+    color: var(--color-cosmic-cyan);
+  }
+
+  /* Bottom Bar */
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(154, 170, 196, 0.1);
+  }
+
+  @media (min-width: 640px) {
+    .footer-bottom {
+      flex-direction: row;
+    }
+  }
+
+  .copyright {
+    font-size: 0.85rem;
+    color: var(--color-muted-text);
+    text-align: center;
+  }
+
+  .back-to-top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+    color: var(--color-muted-text);
+    background: transparent;
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .back-to-top-btn:hover {
+    color: var(--color-cosmic-cyan);
+    border-color: var(--color-cosmic-cyan);
+    box-shadow: 0 0 10px var(--color-cyan-glow);
+  }
+
+  .up-arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  .back-to-top-btn:hover .up-arrow {
+    transform: translateY(-2px);
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('back-to-top');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+</script>

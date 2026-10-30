@@ -1,0 +1,376 @@
+---
+---
+
+<div class="particle-experiment-wrapper glass-card">
+  <!-- Controls Header -->
+  <div class="experiment-toolbar">
+    <div class="toolbar-left">
+      <span class="toolbar-indicator live-dot"></span>
+      <span class="toolbar-title text-mono">PARTICLE_CANVAS_2D // ACTIVE</span>
+    </div>
+
+    <div class="toolbar-controls">
+      <!-- Play / Pause -->
+      <button type="button" class="tool-btn" id="particle-pause-btn" title="Tạm dừng / Tiếp tục">
+        <span id="particle-pause-icon">⏸</span>
+        <span id="particle-pause-text">Tạm dừng</span>
+      </button>
+
+      <!-- Color Palette -->
+      <div class="color-picker-group">
+        <label for="particle-color-select" class="control-label text-mono">Sắc màu:</label>
+        <select id="particle-color-select" class="tool-select text-mono">
+          <option value="cyan" selected>Cosmic Cyan</option>
+          <option value="violet">Violet Nebula</option>
+          <option value="multi">Tri-Color Cosmic</option>
+        </select>
+      </div>
+
+      <!-- Particle Count -->
+      <div class="slider-group">
+        <label for="particle-count-slider" class="control-label text-mono">Số hạt: <span id="particle-count-val">75</span></label>
+        <input type="range" id="particle-count-slider" min="30" max="130" value="75" class="tool-slider" />
+      </div>
+
+      <!-- Reset -->
+      <button type="button" class="tool-btn" id="particle-reset-btn" title="Làm mới trạng thái">
+        <span>↺ Làm mới</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Canvas Stage -->
+  <div class="canvas-container" id="particle-canvas-container">
+    <canvas id="particle-canvas"></canvas>
+    <div class="canvas-hint text-mono">
+      <span>✦ Rê chuột vào không gian để hút và liên kết các hạt năng lượng</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .particle-experiment-wrapper {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-color: rgba(85, 214, 255, 0.25);
+  }
+
+  .experiment-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.4rem;
+    background: rgba(7, 11, 24, 0.75);
+    border-bottom: 1px solid var(--color-border-glass);
+  }
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 8px #10B981;
+  }
+
+  .toolbar-title {
+    font-size: 0.8rem;
+    color: var(--color-cosmic-cyan);
+    letter-spacing: 0.05em;
+  }
+
+  .toolbar-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .control-label {
+    font-size: 0.75rem;
+    color: var(--color-muted-text);
+  }
+
+  .tool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.78rem;
+    color: var(--color-starlight);
+    background: rgba(18, 28, 52, 0.8);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .tool-btn:hover {
+    border-color: var(--color-cosmic-cyan);
+    color: var(--color-cosmic-cyan);
+    box-shadow: 0 0 8px var(--color-cyan-glow);
+  }
+
+  .color-picker-group,
+  .slider-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .tool-select {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.78rem;
+    color: var(--color-starlight);
+    background: rgba(18, 28, 52, 0.9);
+    border: 1px solid var(--color-border-glass);
+    border-radius: var(--radius-sm);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .tool-slider {
+    width: 90px;
+    accent-color: var(--color-cosmic-cyan);
+    cursor: pointer;
+  }
+
+  /* Canvas Stage */
+  .canvas-container {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(18, 28, 52, 0.4) 0%, rgba(7, 11, 24, 0.95) 100%);
+    cursor: crosshair;
+  }
+
+  #particle-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .canvas-hint {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.5rem;
+    font-size: 0.78rem;
+    color: rgba(154, 170, 196, 0.7);
+    pointer-events: none;
+    background: rgba(7, 11, 24, 0.6);
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(85, 214, 255, 0.1);
+  }
+</style>
+
+<script>
+  interface Particle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    radius: number;
+    color: string;
+  }
+
+  const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement | null;
+  const container = document.getElementById('particle-canvas-container');
+  const pauseBtn = document.getElementById('particle-pause-btn');
+  const pauseIcon = document.getElementById('particle-pause-icon');
+  const pauseText = document.getElementById('particle-pause-text');
+  const colorSelect = document.getElementById('particle-color-select') as HTMLSelectElement | null;
+  const countSlider = document.getElementById('particle-count-slider') as HTMLInputElement | null;
+  const countVal = document.getElementById('particle-count-val');
+  const resetBtn = document.getElementById('particle-reset-btn');
+
+  if (canvas && container) {
+    const ctx = canvas.getContext('2d');
+    let width = 0;
+    let height = 0;
+    let particles: Particle[] = [];
+    let animationId = 0;
+    let isRunning = true;
+    let colorMode = 'cyan';
+    let particleCount = 75;
+
+    // Mouse coordinates
+    const mouse = {
+      x: -1000,
+      y: -1000,
+      radius: 140,
+    };
+
+    function resize() {
+      if (!canvas || !container) return;
+      const dpr = window.devicePixelRatio || 1;
+      width = container.clientWidth;
+      height = container.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    }
+
+    function getParticleColor(): string {
+      if (colorMode === 'cyan') return 'rgba(85, 214, 255, 0.85)';
+      if (colorMode === 'violet') return 'rgba(167, 139, 250, 0.85)';
+      // multi
+      const colors = [
+        'rgba(85, 214, 255, 0.85)',
+        'rgba(100, 139, 255, 0.85)',
+        'rgba(167, 139, 250, 0.85)',
+      ];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 1.4,
+          vy: (Math.random() - 0.5) * 1.4,
+          radius: Math.random() * 2 + 1.2,
+          color: getParticleColor(),
+        });
+      }
+    }
+
+    function updateAndDraw() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, width, height);
+
+      const maxConnectDist = 110;
+
+      // Update positions
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounce on boundary
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        // Interaction with mouse
+        const dxMouse = mouse.x - p.x;
+        const dyMouse = mouse.y - p.y;
+        const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+        if (distMouse < mouse.radius) {
+          // Subtle attraction towards mouse
+          const force = (mouse.radius - distMouse) / mouse.radius;
+          p.x += dxMouse * force * 0.03;
+          p.y += dyMouse * force * 0.03;
+
+          // Connect line to mouse
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(85, 214, 255, ${0.4 * (1 - distMouse / mouse.radius)})`;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        }
+
+        // Draw particle dot
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+        ctx.shadowBlur = 0; // reset
+
+        // Connect lines between neighboring particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < maxConnectDist) {
+            const alpha = (1 - dist / maxConnectDist) * 0.35;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle =
+              colorMode === 'violet'
+                ? `rgba(167, 139, 250, ${alpha})`
+                : `rgba(85, 214, 255, ${alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+
+      if (isRunning) {
+        animationId = requestAnimationFrame(updateAndDraw);
+      }
+    }
+
+    // Event listeners
+    container.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+
+    container.addEventListener('mouseleave', () => {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
+
+    window.addEventListener('resize', () => {
+      resize();
+      initParticles();
+    });
+
+    // Control buttons
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', () => {
+        isRunning = !isRunning;
+        if (pauseIcon) pauseIcon.textContent = isRunning ? '⏸' : '▶';
+        if (pauseText) pauseText.textContent = isRunning ? 'Tạm dừng' : 'Tiếp tục';
+        if (isRunning) updateAndDraw();
+      });
+    }
+
+    if (colorSelect) {
+      colorSelect.addEventListener('change', () => {
+        colorMode = colorSelect.value;
+        particles.forEach((p) => {
+          p.color = getParticleColor();
+        });
+      });
+    }
+
+    if (countSlider) {
+      countSlider.addEventListener('input', () => {
+        particleCount = parseInt(countSlider.value, 10);
+        if (countVal) countVal.textContent = String(particleCount);
+        initParticles();
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        initParticles();
+      });
+    }
+
+    // Startup
+    resize();
+    initParticles();
+    updateAndDraw();
+  }
+</script>
