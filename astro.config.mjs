@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://khanh.github.io',
+  site: 'https://khanhtd19.github.io',
   base: '/',
   integrations: [sitemap()],
   markdown: {
