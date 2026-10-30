@@ -30,11 +30,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Build Astro site
         run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
